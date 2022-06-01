@@ -1,4 +1,4 @@
-import { Scene, BoxBufferGeometry, MeshStandardMaterial, Color, Mesh } from "three";
+import { Scene, BoxGeometry, MeshStandardMaterial, Color, Mesh } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 
 import { pick } from "./randomUtils";
@@ -18,7 +18,7 @@ export function setupShapeCluster(scene: Scene): void {
         const h = randFloat(8, 16);
         const d = randFloat(8, 16);
 
-        const geometry = new BoxBufferGeometry(w, h, d);
+        const geometry = new BoxGeometry(w, h, d);
         const material = new MeshStandardMaterial({
             color: new Color(pick(palette))
         });
