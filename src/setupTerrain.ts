@@ -1,4 +1,4 @@
-import { BoxBufferGeometry, MeshStandardMaterial, Mesh, Scene, Color } from "three";
+import { MeshStandardMaterial, Mesh, Scene, Color, BoxGeometry } from "three";
 
 //https://www.npmjs.com/package/simplex-noise
 import SimplexNoise from 'simplex-noise';
@@ -15,7 +15,7 @@ export function setupTerrain(scene: Scene): void {
     const noiseScaling = 0.05;
     const verticalScaling = 3;
     const seaLevel = 0; //relative to simplex noise values of -1 to 1
-    const geometry = new BoxBufferGeometry(1, 0.1, 1);
+    const geometry = new BoxGeometry(1, 0.1, 1);
 
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
