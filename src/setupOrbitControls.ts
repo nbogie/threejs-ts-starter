@@ -9,7 +9,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 export function setupOrbitControls(camera: Camera, htmlElement: HTMLElement): OrbitControls {
 
     const controls = new OrbitControls(camera, htmlElement);
-    controls.autoRotate = false;
+    controls.autoRotate = true;
     controls.enableDamping = true;
 
     //IF you change the camera transform manually (e.g. position, orientation) you MUST call controls.update() after.

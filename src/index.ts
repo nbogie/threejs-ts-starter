@@ -29,8 +29,9 @@ export function setupThreeJSScene(): void {
 
     setupHelpers(scene);
 
-    //OR use this slightly fancier one (but don't setup the grid helper with it). 
-    //Reload browser for variations with this one.
+    //OR use this slightly fancier one
+    //(but don't setup the grid helper with it). 
+    //Use the number keys 0, 1,2 or 3 with this one to choose which effect to see.
     // const effectComposer = setupEffectComposer2(camera, renderer, scene);
 
     setupLights(scene);

@@ -11,10 +11,11 @@ import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorSha
 
 export function setupEffectComposer2(camera: PerspectiveCamera, renderer: WebGLRenderer, scene: Scene): EffectComposer {
 
-    //Simplified from this example
+    //Built initially from this example
     //https://threejs.org/examples/webgl_postprocessing_unreal_bloom.html
 
     const renderPass = new RenderPass(scene, camera);
+
 
     const bloomPass = new UnrealBloomPass(new Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
     bloomPass.threshold = 0;
@@ -25,31 +26,42 @@ export function setupEffectComposer2(camera: PerspectiveCamera, renderer: WebGLR
     const rgbShiftShaderPass = new ShaderPass(RGBShiftShader);
     rgbShiftShaderPass.uniforms['amount'].value = 0.0015;
 
+
     const dotsShaderPass = new ShaderPass(DotScreenShader);
     dotsShaderPass.uniforms['scale'].value = 4;
+
 
     const grayscaleShaderPass = new ShaderPass(LuminosityShader);
     const sobelShaderPass = new ShaderPass(SobelOperatorShader);
     sobelShaderPass.uniforms['resolution'].value.x = window.innerWidth * window.devicePixelRatio;
     sobelShaderPass.uniforms['resolution'].value.y = window.innerHeight * window.devicePixelRatio;
 
+
     const composer = new EffectComposer(renderer);
 
-    const useSetup1 = Math.random() > 0.5;
-    if (useSetup1) {
-        composer.addPass(renderPass);
-        composer.addPass(rgbShiftShaderPass);
-        composer.addPass(bloomPass);
-        if (Math.random() > 0.5) {
-            composer.addPass(dotsShaderPass);
+    //Function to compose one of a number of presets.
+    type EffectChoice = "0" | "1" | "2" | "3";
+    function chooseEffect(choice: EffectChoice): void {
+        const configs = {
+            "0": [renderPass],
+            "1": [renderPass, rgbShiftShaderPass, bloomPass],
+            "2": [renderPass, rgbShiftShaderPass, bloomPass, dotsShaderPass],
+            "3": [renderPass, rgbShiftShaderPass, grayscaleShaderPass, sobelShaderPass, bloomPass],
         }
-    } else {
-        composer.addPass(renderPass);
-        composer.addPass(rgbShiftShaderPass);
-        composer.addPass(grayscaleShaderPass);
-        composer.addPass(sobelShaderPass);
-        composer.addPass(bloomPass);
+        const passes = configs[choice];
+        composer.reset();//get rid of whatever was set up before, if anything
+        for (const p of passes) {
+            composer.addPass(p);
+        }
     }
+    chooseEffect("1");
+
+    document.body.addEventListener("keydown", (e) => {
+        const possibleChoices: EffectChoice[] = ["0", "1", "2", "3"];
+        if (possibleChoices.includes(e.key as EffectChoice)) {
+            chooseEffect(e.key as EffectChoice)
+        }
+    })
 
     return composer;
 }
