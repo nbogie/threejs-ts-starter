@@ -3,3 +3,4 @@ node_modules
 /dist
 .netlify
 .DS_Store
+cherry-pick-to-all.sh
