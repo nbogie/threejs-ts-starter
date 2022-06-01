@@ -2,7 +2,7 @@ import {
     Scene,
     Mesh,
     MeshStandardMaterial,
-    BoxBufferGeometry,
+    BoxGeometry,
 } from 'three';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
@@ -12,6 +12,8 @@ import { setupRenderer } from './setupRenderer';
 
 export function setupThreeJSScene(): void {
 
+    const scene = new Scene();
+
     const dimensions = { w: window.innerWidth, h: window.innerHeight };
 
     const camera = setupCamera(dimensions);
@@ -20,14 +22,14 @@ export function setupThreeJSScene(): void {
 
     const controls = setupOrbitControls(camera, renderer.domElement);
 
-    const scene = new Scene();
-
     setupLights(scene);
 
     setupHelpers(scene);
 
-    //shape(s)
-    const geometry = new BoxBufferGeometry(10, 10, 10);
+
+
+    //Make some shape(s) and add them to the scene
+    const geometry = new BoxGeometry(10, 10, 10);
     const material = new MeshStandardMaterial({
         color: 0xff00ff
     });
@@ -37,20 +39,27 @@ export function setupThreeJSScene(): void {
     scene.add(myShape);
 
 
+
     animate();
+
+
 
 
     function animate() {
         myShape.rotation.y += 0.01;
         myShape.rotation.x += 0.02;
 
+        //Draw the current scene to the canvas - one frame of animation.
         renderer.render(scene, camera);
 
         // required if controls.enableDamping or controls.autoRotate are set to true
         controls.update();
 
+        //Queue for this function to be called again when the browser is ready for another animation frame.
         requestAnimationFrame(animate);
     }
+
+
 }
 
 setupThreeJSScene();

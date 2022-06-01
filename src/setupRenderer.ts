@@ -4,10 +4,13 @@ export function setupRenderer(camera: PerspectiveCamera, dim: { w: number, h: nu
 
     const renderer: WebGLRenderer = new WebGLRenderer({ antialias: true });
     renderer.setSize(dim.w, dim.h);
+
+    //Add the canvas (created by the renderer) to the end of the html page's body
     document.body.appendChild(renderer.domElement);
 
-    // add Events Global
-    //TODO: fixup
+
+
+    //Register what to do if the window gets resized
     window.addEventListener('resize', onWindowResize, false);
     function onWindowResize() {
         dim.w = window.innerWidth;
