@@ -1,4 +1,5 @@
 :root {
+  /* variables we can use throughout the css */
   --hudTextColour: rgb(42, 117, 87);
 }
 
@@ -24,6 +25,7 @@ body {
   align-items: center;
   overscroll-behavior-y: none;
   overscroll-behavior-x: none;
+  user-select: none;
 }
 
 canvas {
