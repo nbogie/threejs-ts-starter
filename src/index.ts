@@ -1,18 +1,14 @@
 import {
-    Scene,
-    Mesh,
-    MeshStandardMaterial,
-    BoxGeometry,
-    Color,
-    Vector3,
+    Scene
 } from 'three';
-import { randFloat } from 'three/src/math/MathUtils';
 import { setupCamera } from './setupCamera';
-import { setupEffectComposer } from './setupEffectComposer';
+import { setupEffectComposer1 } from './setupEffectComposer1';
+import { setupEffectComposer2 } from './setupEffectComposer2';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
+import { setupShapes } from './setupShapes';
 
 export function setupThreeJSScene(): void {
 
@@ -24,46 +20,28 @@ export function setupThreeJSScene(): void {
 
     const controls = setupOrbitControls(camera, renderer.domElement);
     controls.autoRotate = true;
-    const scene = new Scene();
-    const effectComposer = setupEffectComposer(camera, renderer, scene);
 
-    setupLights(scene);
+    const scene = new Scene();
+
+    //This is where the post-processing gets set up.
+    //Later in animate we'll call effectComposer.render() to actually *use* it
+    const effectComposer = setupEffectComposer1(camera, renderer, scene);
 
     setupHelpers(scene);
 
-    //shape(s)
-    function makeBoxAt(pos: Vector3, colour: Color) {
-        const geometry = new BoxGeometry(10, 10, 10);
-        const material = new MeshStandardMaterial({
-            wireframe: false,
-            color: colour,
-            transparent: true,
-            opacity: randFloat(0.2, 0.8)
-        });
+    //OR use this slightly fancier one (but don't setup the grid helper with it). 
+    //Reload browser for variations with this one.
+    // const effectComposer = setupEffectComposer2(camera, renderer, scene);
 
-        const boxMesh: Mesh = new Mesh(geometry, material);
-        boxMesh.position.copy(pos);
-        boxMesh.rotation.x = randFloat(0, Math.PI * 2);
-        boxMesh.rotation.y = randFloat(0, Math.PI * 2);
-        boxMesh.rotation.z = randFloat(0, Math.PI * 2);
-        return boxMesh;
-    }
-    const cube1 = makeBoxAt(new Vector3(-10, 10, 0), new Color("magenta"));
-    const cube2 = makeBoxAt(new Vector3(10, 15, 0), new Color("cyan"));
-    const cube3 = makeBoxAt(new Vector3(0, 7, -15), new Color("lime"));
-    const cube4 = makeBoxAt(new Vector3(5, 10, 15), new Color("yellow"));
+    setupLights(scene);
 
-    scene.add(cube1);
-    scene.add(cube2);
-    scene.add(cube3);
-    scene.add(cube4);
-
+    //Add something to look at!  exactly *what* is not important in the study of the post-processing.
+    const myCubes = setupShapes(scene);
 
     animate();
 
-
     function animate() {
-        for (const cube of [cube1, cube2, cube3, cube4]) {
+        for (const cube of myCubes) {
             cube.rotation.y += 0.01;
             cube.rotation.x += 0.02;
         }
