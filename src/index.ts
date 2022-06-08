@@ -32,6 +32,7 @@ export function setupThreeJSScene(): void {
 
 
 
+    //This is the only line you need if you're not using orbit controls, too
     const dragControls = new DragControls(boxes, camera, renderer.domElement);
 
     dragControls.addEventListener('dragstart', function (event) {
