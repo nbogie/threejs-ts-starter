@@ -1,9 +1,9 @@
 import {
-    Scene,
-    Mesh,
-    MeshStandardMaterial,
-    BoxGeometry,
+    Mesh, Scene
 } from 'three';
+import { DragControls } from "three/examples/jsm/controls/DragControls";
+import { collect } from './collectionUtils';
+import { makeRandomBox } from './randomBox';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
@@ -20,23 +20,29 @@ export function setupThreeJSScene(): void {
 
     const renderer = setupRenderer(camera, dimensions);
 
-    const controls = setupOrbitControls(camera, renderer.domElement);
+    const orbitControls = setupOrbitControls(camera, renderer.domElement);
+
 
     setupLights(scene);
 
     setupHelpers(scene);
 
+    const boxes: Mesh[] = collect(10, makeRandomBox);
+    scene.add(...boxes);
 
 
-    //Make some shape(s) and add them to the scene
-    const geometry = new BoxGeometry(10, 10, 10);
-    const material = new MeshStandardMaterial({
-        color: 0xff00ff
+
+    const dragControls = new DragControls(boxes, camera, renderer.domElement);
+
+    dragControls.addEventListener('dragstart', function (event) {
+        orbitControls.enabled = false;
+        event.object.material.emissive.set(0x777777);
     });
 
-    const myShape: Mesh = new Mesh(geometry, material);
-    myShape.position.y = 20;
-    scene.add(myShape);
+    dragControls.addEventListener('dragend', function (event) {
+        orbitControls.enabled = true;
+        event.object.material.emissive.set(0x000000);
+    });
 
 
 
@@ -46,14 +52,12 @@ export function setupThreeJSScene(): void {
 
 
     function animate() {
-        myShape.rotation.y += 0.01;
-        myShape.rotation.x += 0.02;
 
         //Draw the current scene to the canvas - one frame of animation.
         renderer.render(scene, camera);
 
         // required if controls.enableDamping or controls.autoRotate are set to true
-        controls.update();
+        orbitControls.update();
 
         //Queue for this function to be called again when the browser is ready for another animation frame.
         requestAnimationFrame(animate);
