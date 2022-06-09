@@ -4,9 +4,8 @@ import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
-import { alignMeshToItsBody, createGroundBodyAndMesh, createRandomBoxBodyAndMesh, setupPhysics } from './setupPhysics';
+import { alignMeshToItsBody, createGroundBodyAndMesh, createRandomBoxBodyAndMesh, fireProjectile, setupPhysics } from './setupPhysics';
 import { setupRenderer } from './setupRenderer';
-
 export function setupThreeJSScene(): void {
 
     const scene = new Scene();
@@ -26,16 +25,16 @@ export function setupThreeJSScene(): void {
     const { world } = setupPhysics();
     const { groundMesh } = createGroundBodyAndMesh(world, scene);
 
-    //make some initial cubes
     const cubeMeshes: Mesh[] = [];
-    for (let i = 0; i < 40; i++) {
-        cubeMeshes.push(createRandomBoxBodyAndMesh(world, scene));
-    }
-
     //make a new cube periodically 
     setInterval(() => {
         cubeMeshes.push(createRandomBoxBodyAndMesh(world, scene));
-    }, 100);
+    }, 300);
+
+    document.addEventListener("mousedown", () => {
+        const projectileMesh = fireProjectile(world, scene, camera)
+        cubeMeshes.push(projectileMesh)
+    })
 
     const clock = new Clock();
     animate();

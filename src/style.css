@@ -16,4 +16,5 @@ canvas {
     font-size: 3rem;
     color: white;
     text-align: center;
+    user-select: none
 }
