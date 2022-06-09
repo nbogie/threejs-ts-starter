@@ -1,5 +1,5 @@
 import * as CANNON from 'cannon-es';
-import { Body, GSSolver, NaiveBroadphase, World } from 'cannon-es';
+import { Body, World } from 'cannon-es';
 import { BoxGeometry, Camera, Color, DoubleSide, Mesh, MeshStandardMaterial, PlaneGeometry, Quaternion, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
