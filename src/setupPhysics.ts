@@ -93,20 +93,31 @@ export function alignMeshToItsBody(mesh: Mesh): void {
     mesh.position.copy(body.position as unknown as Vector3);
 }
 
-export function fireProjectile(world: World, scene: Scene, camera: Camera): Mesh {
-    const fireDir = new Vector3();
-    camera.getWorldDirection(fireDir);
-    const upBoost = camera.up.clone().setLength(0.3);
-    fireDir.add(upBoost).normalize();
+/** 
+Fire a rigid body projectile from (almost) the given camera's position, in (almost) the given camera's direction.
 
-    const camPos = camera.position;
-    const spawnOffset = fireDir.setLength(1.2);//how far in front of cam?
-    const spawnPos = new Vector3().addVectors(camPos, spawnOffset);
+Adds the rigid body to the given physics world.
+
+Creates a representative three.js mesh and adds that to the given scene.
+
+@returns the representative mesh (which has the rigid body as its userData.body) to be updated each frame.
+*/
+export function fireProjectile(world: World, scene: Scene, camera: Camera): Mesh {
 
     const projectileMesh = createRandomBoxBodyAndMesh(world, scene);
 
-    const body = projectileMesh.userData.body as Body;
+    //calculate direction - slightly up from camera direction
+    const fireDir = new Vector3(); //this will by mutated by getWorldDirection()
+    camera.getWorldDirection(fireDir);
+    //improve fireDir a bit by adding a further upward component
+    const upBoost = camera.up.clone().setLength(0.3);
+    fireDir.add(upBoost).normalize();
 
+    //set a spawn position somewhat in front of camera
+    const camPos = camera.position;
+    const spawnOffset = fireDir.setLength(1.2);//how far in front of cam?
+    const spawnPos = new Vector3().addVectors(camPos, spawnOffset);
+    const body = projectileMesh.userData.body as Body;
     body.position.set(spawnPos.x, spawnPos.y, spawnPos.z);
     projectileMesh.position.copy(spawnPos)
 
