@@ -94,10 +94,13 @@ export function alignMeshToItsBody(mesh: Mesh): void {
 }
 
 export function fireProjectile(world: World, scene: Scene, camera: Camera): Mesh {
-    const camDir = new Vector3();
-    camera.getWorldDirection(camDir);
+    const fireDir = new Vector3();
+    camera.getWorldDirection(fireDir);
+    const upBoost = camera.up.clone().setLength(0.3);
+    fireDir.add(upBoost).normalize();
+
     const camPos = camera.position;
-    const spawnOffset = camDir.multiplyScalar(1);//how far in front of cam?  (camDir is normalized.)
+    const spawnOffset = fireDir.setLength(1.2);//how far in front of cam?
     const spawnPos = new Vector3().addVectors(camPos, spawnOffset);
 
     const projectileMesh = createRandomBoxBodyAndMesh(world, scene);
@@ -107,7 +110,7 @@ export function fireProjectile(world: World, scene: Scene, camera: Camera): Mesh
     body.position.set(spawnPos.x, spawnPos.y, spawnPos.z);
     projectileMesh.position.copy(spawnPos)
 
-    body.applyImpulse(new CANNON.Vec3(camDir.x, camDir.y, camDir.z).scale(500))
+    body.applyImpulse(new CANNON.Vec3(fireDir.x, fireDir.y, fireDir.z).scale(500))
 
     return projectileMesh;
 }
