@@ -1,10 +1,10 @@
 
-import { Clock, Mesh, Scene } from 'three';
+import { Mesh, Scene } from 'three';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
-import { alignMeshToItsBody, createGroundBodyAndMesh, createRandomBoxBodyAndMesh, fireProjectile, setupPhysics } from './setupPhysics';
+import { alignMeshToItsBody, createGroundBodyAndMesh, createRandomBoxBodyAndMesh, fireProjectile, setupPhysics, toggleGravity } from './setupPhysics';
 import { setupRenderer } from './setupRenderer';
 export function setupThreeJSScene(): void {
 
@@ -34,6 +34,11 @@ export function setupThreeJSScene(): void {
     document.addEventListener("mousedown", () => {
         const projectileMesh = fireProjectile(world, scene, camera)
         cubeMeshes.push(projectileMesh)
+    })
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "g") {
+            toggleGravity(world)
+        }
     })
 
     animate();

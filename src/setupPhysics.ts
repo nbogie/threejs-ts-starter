@@ -6,6 +6,7 @@ import { pick } from "./randomUtils";
 
 //getting started docs: https://pmndrs.github.io/cannon-es/docs/index.html
 
+const defaultGravityStrength = -9.82;
 export function setupPhysics(): { world: World } {
     const world = new World();
     world.gravity.set(0, -9.82, 0); // m/s²    
@@ -121,4 +122,12 @@ export function fireProjectile(world: World, scene: Scene, camera: Camera): Mesh
     body.applyImpulse(new CANNON.Vec3(fireDir.x, fireDir.y, fireDir.z).scale(500))
 
     return projectileMesh;
+}
+export function toggleGravity(world: World): void {
+    if (world.gravity.almostZero()) {
+        world.gravity.set(0, defaultGravityStrength, 0);
+    } else {
+        world.gravity.set(0, 0, 0);
+    }
+
 }
