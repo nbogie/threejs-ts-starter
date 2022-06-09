@@ -18,9 +18,15 @@ export function setupPhysics(): { world: World; } {
 }
 
 export function createGroundBodyAndMesh(world: World, scene: Scene): { groundBody: Body, groundMesh: Mesh } {
-    const groundBody = new Body({ mass: 0, shape: new CANNON.Plane });
-    groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
-    groundBody.position.y = 0;
+    //A static body can only be positioned in the world and isn't affected by forces nor velocity.
+
+    const groundBody = new Body({
+        mass: 0,  //will be automatically flagged as a static body
+        shape: new CANNON.Plane
+    });
+
+    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+    // groundBody.position.y = 0;
     world.addBody(groundBody);
 
     const groundMesh = new Mesh(new PlaneGeometry(10, 10, 2), new MeshStandardMaterial({ side: DoubleSide }));
