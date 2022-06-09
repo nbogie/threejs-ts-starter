@@ -4,6 +4,8 @@ import { BoxGeometry, Camera, Color, DoubleSide, Mesh, MeshStandardMaterial, Pla
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
 
+//getting started docs: https://pmndrs.github.io/cannon-es/docs/index.html
+
 export function setupPhysics(): { world: World; } {
     const world = new World();
     world.gravity.set(0, -9.82, 0); // m/s²
