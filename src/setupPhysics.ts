@@ -6,14 +6,9 @@ import { pick } from "./randomUtils";
 
 //getting started docs: https://pmndrs.github.io/cannon-es/docs/index.html
 
-export function setupPhysics(): { world: World; } {
+export function setupPhysics(): { world: World } {
     const world = new World();
-    world.gravity.set(0, -9.82, 0); // m/s²
-    world.broadphase = new NaiveBroadphase();
-    (world.solver as GSSolver).iterations = 10;
-
-    world.defaultContactMaterial.contactEquationStiffness = 1e7;
-    world.defaultContactMaterial.contactEquationRelaxation = 4;
+    world.gravity.set(0, -9.82, 0); // m/s²    
     return { world };
 }
 
@@ -56,6 +51,7 @@ function createRandomBoxBody(world: World): Body {
     body.velocity.set(0, 0, 0);
 
     body.angularVelocity.copy(new CANNON.Vec3(randFloatSpread(0.5), randFloatSpread(0.5), randFloatSpread(0.5)).scale(10));
+    body.angularDamping = 0.3
     world.addBody(body);
     return body;
 }
@@ -121,6 +117,7 @@ export function fireProjectile(world: World, scene: Scene, camera: Camera): Mesh
     body.position.set(spawnPos.x, spawnPos.y, spawnPos.z);
     projectileMesh.position.copy(spawnPos)
 
+    body.angularVelocity.set(0, 6, 0);
     body.applyImpulse(new CANNON.Vec3(fireDir.x, fireDir.y, fireDir.z).scale(500))
 
     return projectileMesh;
