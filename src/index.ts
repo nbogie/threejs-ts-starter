@@ -1,18 +1,15 @@
+
 import {
-    Scene,
-    Mesh,
-    MeshStandardMaterial,
-    BoxGeometry,
-    PlaneGeometry,
-    DoubleSide,
+    BoxGeometry, BufferGeometry, Color, DoubleSide, Material, Mesh, MeshStandardMaterial, PlaneGeometry, Scene
 } from 'three';
+import { pick } from './randomUtils';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
+import { createRandomCubeBody, setupPhysics } from './setupPhysics';
 import { setupRenderer } from './setupRenderer';
 
-import { setupPhysics } from './setupPhysics';
 export function setupThreeJSScene(): void {
 
     const scene = new Scene();
@@ -29,26 +26,26 @@ export function setupThreeJSScene(): void {
 
     setupHelpers(scene);
 
-
-
     //Make some shape(s) and add them to the scene
-    const geometry = new BoxGeometry(1, 1, 1);
-    const material = new MeshStandardMaterial({
-        color: 0xff00ff
-    });
+
 
 
     const { cubeBodies, groundBody, world } = setupPhysics();
     const cubeMeshes: Mesh[] = [];
     for (const b of cubeBodies) {
-        const cubeMesh: Mesh = new Mesh(geometry, material);
-        scene.add(cubeMesh);
-        cubeMesh.userData.body = b;
+        const cubeMesh = createCubeMeshForBody(b, scene)
         cubeMeshes.push(cubeMesh)
     }
 
     const floorMesh = new Mesh(new PlaneGeometry(10, 10, 2), new MeshStandardMaterial({ side: DoubleSide }));
     scene.add(floorMesh)
+
+    setInterval(() => {
+        const cubeBody = createRandomCubeBody(world);
+        cubeBodies.push(cubeBody);
+        cubeMeshes.push(createCubeMeshForBody(cubeBody, scene))
+    }, 100);
+
     animate();
 
 
@@ -82,3 +79,24 @@ export function setupThreeJSScene(): void {
 }
 
 setupThreeJSScene();
+
+function createCubeMeshForBody(body: CANNON.Body, scene: Scene): Mesh {
+    const colourStrings = [
+        "#fc354c",
+        "#29221f",
+        "#13747d",
+        "#0abfbc",
+        "#fcf7c5"
+    ];
+    const color = new Color(pick(colourStrings));
+    //We ought to reuse these for better performance.
+    const geometry = new BoxGeometry(1, 1, 1);
+    const material = new MeshStandardMaterial({
+        color
+    });
+    const cubeMesh: Mesh = new Mesh(geometry, material);
+    cubeMesh.userData.body = body;
+    scene.add(cubeMesh);
+    return cubeMesh;
+
+}

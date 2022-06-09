@@ -21,14 +21,18 @@ export function setupPhysics() {
 
     const cubeBodies = [];
     for (let i = 0; i < 40; i++) {
-        // Shape on plane
-        const cubeBody = new CANNON.Body({ mass: 30 });
-        cubeBody.addShape(new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)));
-        cubeBody.position.set(randFloatSpread(10), randFloat(2, 5), randFloatSpread(10));
-        cubeBody.velocity.set(0, 0, 0);
-        cubeBody.angularVelocity.set(0, 0, 0);
-        world.addBody(cubeBody);
+        const cubeBody = createRandomCubeBody(world);
         cubeBodies.push(cubeBody);
     }
     return { cubeBodies, groundBody, world };
+}
+
+export function createRandomCubeBody(world: CANNON.World): CANNON.Body {
+    const cubeBody = new CANNON.Body({ mass: 30 });
+    cubeBody.addShape(new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)));
+    cubeBody.position.set(randFloatSpread(10), randFloat(5, 15), randFloatSpread(10));
+    cubeBody.velocity.set(0, 0, 0);
+    cubeBody.angularVelocity.set(0, 0, 0);
+    world.addBody(cubeBody);
+    return cubeBody;
 }
