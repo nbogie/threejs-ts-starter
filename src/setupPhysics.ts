@@ -16,11 +16,9 @@ export function setupPhysics(): { world: World; } {
 }
 
 export function createGroundBodyAndMesh(world: World, scene: Scene): { groundBody: Body, groundMesh: Mesh } {
-    const groundShape = new CANNON.Plane()
-    const groundBody = new Body({ mass: 0 });
+    const groundBody = new Body({ mass: 0, shape: new CANNON.Plane });
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
     groundBody.position.y = 0;
-    groundBody.addShape(groundShape);
     world.addBody(groundBody);
 
     const groundMesh = new Mesh(new PlaneGeometry(10, 10, 2), new MeshStandardMaterial({ side: DoubleSide }));
@@ -42,8 +40,10 @@ function createRandomBoxBody(world: World): Body {
 
     const dimensions = new CANNON.Vec3(randFloat(0.3, 0.8), randFloat(0.3, 0.8), randFloat(0.3, 0.8));
 
-    const body = new Body({ mass: 30 });
-    body.addShape(new CANNON.Box(dimensions));
+    const body = new Body({
+        mass: 30,
+        shape: new CANNON.Box(dimensions)
+    });
     body.position.set(randFloatSpread(10), randFloat(5, 15), randFloatSpread(10));
     body.velocity.set(0, 0, 0);
 
