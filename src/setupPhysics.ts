@@ -1,5 +1,5 @@
-import CANNON, { Vec3 } from "cannon";
-import { BoxGeometry, Color, DoubleSide, Mesh, MeshStandardMaterial, PlaneGeometry, Scene } from "three";
+import * as CANNON from 'cannon-es'
+import { BoxGeometry, Color, DoubleSide, Mesh, MeshStandardMaterial, PlaneGeometry, Quaternion, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
 
@@ -7,7 +7,7 @@ export function setupPhysics(): { world: CANNON.World; } {
     const world = new CANNON.World();
     world.gravity.set(0, -9.82, 0); // m/s²
     world.broadphase = new CANNON.NaiveBroadphase();
-    world.solver.iterations = 10;
+    (world.solver as CANNON.GSSolver).iterations = 10;
 
     world.defaultContactMaterial.contactEquationStiffness = 1e7;
     world.defaultContactMaterial.contactEquationRelaxation = 4;
@@ -46,7 +46,7 @@ function createRandomBoxBody(world: CANNON.World): CANNON.Body {
     body.position.set(randFloatSpread(10), randFloat(5, 15), randFloatSpread(10));
     body.velocity.set(0, 0, 0);
 
-    body.angularVelocity.copy(new Vec3(randFloatSpread(0.5), randFloatSpread(0.5), randFloatSpread(0.5)).mult(10))
+    body.angularVelocity.copy(new CANNON.Vec3(randFloatSpread(0.5), randFloatSpread(0.5), randFloatSpread(0.5)).scale(10));
     world.addBody(body);
     return body;
 }
@@ -80,9 +80,7 @@ function createBoxMeshForBody(body: CANNON.Body, scene: Scene): Mesh {
 export function alignMeshToItsBody(mesh: Mesh): void {
     const body = mesh.userData.body as CANNON.Body;
     console.assert(body, "mesh.userData.body should not be null.  ", mesh)
-    //@ts-ignore
-    mesh.quaternion.copy(body.quaternion);
-    //@ts-ignore
-    mesh.position.copy(body.position);
+    mesh.quaternion.copy(body.quaternion as unknown as Quaternion);
+    mesh.position.copy(body.position as unknown as Vector3);
 }
 
