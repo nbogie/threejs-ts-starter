@@ -36,11 +36,9 @@ export function setupThreeJSScene(): void {
         cubeMeshes.push(projectileMesh)
     })
 
-    const clock = new Clock();
     animate();
     function animate() {
-        const deltaTime = clock.getDelta() || 1 / 60;
-        world.step(deltaTime);
+        world.fixedStep(); // 1/60th of second, adjusted for delays.
 
         for (const mesh of cubeMeshes) {
             alignMeshToItsBody(mesh);
