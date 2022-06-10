@@ -73,6 +73,10 @@ export function setupTerrain(scene: Scene, gridSize: number): {
 
         //If you want to change the position data values after the first render, you need to set the needsUpdate flag like so:
         geometry.attributes.position.needsUpdate = true; // required after the first render
+
+        //"If you change the position data values after the initial render, you may need to recompute bounding volumes so other features of the engine like view frustum culling or helpers properly work.""
+        //geometry.computeBoundingBox();
+
         geometry.computeVertexNormals();
     }
 
