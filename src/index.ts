@@ -1,4 +1,4 @@
-import { Scene } from 'three';
+import { Color, Scene } from 'three';
 import { setupCamera } from './setupCamera';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
@@ -17,6 +17,7 @@ export function setupThreeJSScene(): void {
     const controls = setupOrbitControls(camera, renderer.domElement);
 
     const scene = new Scene();
+    scene.background = new Color("dodgerblue");
 
     const statsPanel = setupStatsPanel();
 
