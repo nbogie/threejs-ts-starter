@@ -17,7 +17,7 @@ interface GridPos {
  */
 export function setupTerrain(scene: Scene, gridSize: number): {
     instancedMesh: InstancedMesh,
-    updateInstanceMesh: (time: number) => void
+    updateInstancedMesh: (time: number) => void
 } {
     const coloursLookup = createColoursLookup();
 
@@ -41,7 +41,9 @@ export function setupTerrain(scene: Scene, gridSize: number): {
         new MeshStandardMaterial(),
         gridSize * gridSize);
 
-    updateInstanceMesh(0);
+    // instancedMesh.instanceMatrix.setUsage(DynamicDrawUsage); // will be updated every frame
+
+    updateInstancedMesh(0);
     scene.add(instancedMesh)
 
 
@@ -49,7 +51,7 @@ export function setupTerrain(scene: Scene, gridSize: number): {
     /** Update position and colour of all instances in the instanced mesh, based on the FBM noise for the given time.
      * @param time allows animation over time.
      */
-    function updateInstanceMesh(time: number) {
+    function updateInstancedMesh(time: number) {
         for (let row = 0; row < gridSize; row++) {
             for (let col = 0; col < gridSize; col++) {
                 updateInstanceMeshAtGridPos({ col, row }, time);
@@ -129,7 +131,7 @@ export function setupTerrain(scene: Scene, gridSize: number): {
         return coloursLookup.snow
     }
 
-    return { instancedMesh, updateInstanceMesh };
+    return { instancedMesh, updateInstancedMesh };
 }
 
 

@@ -32,7 +32,7 @@ export function setupThreeJSScene(): void {
 
     function animate() {
         renderer.render(scene, camera);
-        terrain.updateInstanceMesh(frameCount / 300);
+        terrain.updateInstancedMesh(frameCount / 300);
 
         // required if controls.enableDamping or controls.autoRotate are set to true
         controls.update();
