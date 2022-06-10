@@ -1,4 +1,4 @@
-Example App using Three.js and Typescript bundled with parcel 🚀🔥.
+A set of examples using Three.js and Typescript bundled with parcel 🚀🔥.
 
 Modified from Alberto Adrián Pucheta's repo: https://github.com/adrianrey05/parcel-typescript-threejs
 
