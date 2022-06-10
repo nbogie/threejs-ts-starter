@@ -16,8 +16,7 @@ interface GridPos {
  * Heights (and colours) are calculated from an open-simplex noise algorithm (from a library).
  */
 export function setupTerrain(scene: Scene, gridSize: number): {
-    instancedMesh: InstancedMesh,
-    updateInstancedMesh: (time: number) => void
+    updateTerrain: (time: number) => void
 } {
     const coloursLookup = createColoursLookup();
 
@@ -43,7 +42,7 @@ export function setupTerrain(scene: Scene, gridSize: number): {
 
     // instancedMesh.instanceMatrix.setUsage(DynamicDrawUsage); // will be updated every frame
 
-    updateInstancedMesh(0);
+    updateTerrain(0);
     scene.add(instancedMesh)
 
 
@@ -51,10 +50,10 @@ export function setupTerrain(scene: Scene, gridSize: number): {
     /** Update position and colour of all instances in the instanced mesh, based on the FBM noise for the given time.
      * @param time allows animation over time.
      */
-    function updateInstancedMesh(time: number) {
+    function updateTerrain(time: number) {
         for (let row = 0; row < gridSize; row++) {
             for (let col = 0; col < gridSize; col++) {
-                updateInstanceMeshAtGridPos({ col, row }, time);
+                updateInstancedMeshAtGridPos({ col, row }, time);
             }
         }
         instancedMesh.instanceMatrix.needsUpdate = true;
@@ -67,7 +66,7 @@ export function setupTerrain(scene: Scene, gridSize: number): {
      * @param gridPos gridPos of instance to update
      * @param time allows animation over time
     */
-    function updateInstanceMeshAtGridPos(gridPos: GridPos, time: number) {
+    function updateInstancedMeshAtGridPos(gridPos: GridPos, time: number) {
         const noiseVals = getNoiseValuesAtGridPos(gridPos, time);
 
         const matrix = new Matrix4();
@@ -131,7 +130,7 @@ export function setupTerrain(scene: Scene, gridSize: number): {
         return coloursLookup.snow
     }
 
-    return { instancedMesh, updateInstancedMesh };
+    return { updateTerrain };
 }
 
 
