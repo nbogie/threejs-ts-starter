@@ -84,12 +84,13 @@ export function setupTerrain(scene: Scene, gridSize: number): {
      * @returns number between -1 and 1, theoretically, though in practice it's unlikely you'll see a value beyond -0.8 to 0.8
      */
     function getFBMNoiseValAtGridPos(pos: GridPos, time: number): number {
-        const noiseVal1 = 1.0 * simplex.noise3d(pos.col * noiseScaling, pos.row * noiseScaling, time);
+        const noiseVal1 = 1.5 * simplex.noise3d(pos.col * noiseScaling, pos.row * noiseScaling, time);
         const noiseVal2 = 0.6 * simplex.noise3d(pos.col * noiseScaling * 2, pos.row * noiseScaling * 2, time + 777);
-        const noiseVal3 = 0.4 * simplex.noise3d(pos.col * noiseScaling * 4, pos.row * noiseScaling * 4, time + 999);
-        const noiseVal4 = 0.2 * simplex.noise3d(pos.col * noiseScaling * 8, pos.row * noiseScaling * 8, time + 1333);
-        const noiseVal5 = 0.1 * simplex.noise3d(pos.col * noiseScaling * 16, pos.row * noiseScaling * 16, time + 1777);
-        const noiseVal = (noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4 + noiseVal5) / 2.3;
+        const noiseVal3 = 0.4 * simplex.noise3d(pos.col * noiseScaling * 4, pos.row * noiseScaling * 4, 3 * time + 999);
+        const noiseVal4 = 0.2 * simplex.noise3d(pos.col * noiseScaling * 8, pos.row * noiseScaling * 8, 4 * time + 1333);
+        const noiseVal5 = 0.03 * simplex.noise3d(pos.col * noiseScaling * 16, pos.row * noiseScaling * 16, 5 * time + 1999);
+        const noiseVal6 = 0.02 * simplex.noise3d(pos.col * noiseScaling * 96, pos.row * noiseScaling * 96, 5 * time + 1777);
+        const noiseVal = (noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4 + noiseVal5 + noiseVal6) / 2.7;
         return noiseVal;
     }
 
