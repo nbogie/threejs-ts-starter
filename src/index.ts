@@ -6,6 +6,7 @@ import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { alignMeshToItsBody, createGroundBodyAndMesh, createRandomBoxBodyAndMesh, fireProjectile, setupPhysics, toggleGravity } from './setupPhysics';
 import { setupRenderer } from './setupRenderer';
+import { setupStatsPanel } from './setupStatsPanel';
 export function setupThreeJSScene(): void {
 
     const scene = new Scene();
@@ -15,6 +16,8 @@ export function setupThreeJSScene(): void {
     const camera = setupCamera(dimensions);
 
     const renderer = setupRenderer(camera, dimensions);
+
+    const statsPanel = setupStatsPanel();
 
     const controls = setupOrbitControls(camera, renderer.domElement);
 
@@ -55,6 +58,8 @@ export function setupThreeJSScene(): void {
 
         // required if controls.enableDamping or controls.autoRotate are set to true
         controls.update();
+
+        statsPanel.update();
 
         //Queue for this function to be called again when the browser is ready for another animation frame.
         requestAnimationFrame(animate);
