@@ -1,7 +1,6 @@
-import { MeshStandardMaterial, Mesh, Scene, Color, BoxGeometry } from "three";
+import { BoxGeometry, Color, Mesh, MeshStandardMaterial, Scene } from "three";
+import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise';
 
-//https://www.npmjs.com/package/simplex-noise
-import SimplexNoise from 'simplex-noise';
 
 /** Add a grid of tiles (mesh objects) to the given scene, at different heights, to simulate (blocky) terrain.
  * Heights (and colours) are calculated from an open-simplex noise algorithm (from a library).
@@ -21,7 +20,7 @@ export function setupTerrain(scene: Scene): void {
         for (let col = 0; col < gridSize; col++) {
 
             //Get a noise value to use for tile's terrain height and colour
-            const noiseVal = simplex.noise2D(col * noiseScaling, row * noiseScaling);
+            const noiseVal = simplex.noise3d(col * noiseScaling, row * noiseScaling, 0);
 
             const colourName = getColourNameForNoiseVal(noiseVal);
             const material = new MeshStandardMaterial({
