@@ -1,6 +1,7 @@
 import * as CANNON from 'cannon-es';
 import { Body, World } from 'cannon-es';
-import { BoxGeometry, Camera, Color, DoubleSide, Mesh, MeshStandardMaterial, PlaneGeometry, Quaternion, Scene, Vector3 } from "three";
+import { Camera, Color, DoubleSide, Mesh, MeshStandardMaterial, PlaneGeometry, Quaternion, Scene, Vector3 } from "three";
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
 
@@ -94,8 +95,10 @@ function createBoxMeshForBody(body: Body, scene: Scene): Mesh {
     const bodyShape = body.shapes[0] as CANNON.Box;
     console.assert(bodyShape.type === 4, "given body should have box shape", bodyShape);
     const { x: w, y: h, z: d } = bodyShape.halfExtents;
-    //We ought to reuse these for better performance.
-    const geometry = new BoxGeometry(w * 2, h * 2, d * 2);
+    //We ought to reuse geometry and material for better performance.
+
+    //The physical box doesn't have rounded edges, but the visualisation will, to show that they can be different.
+    const geometry = new RoundedBoxGeometry(w * 2, h * 2, d * 2);
     const material = new MeshStandardMaterial({
         color
     });
