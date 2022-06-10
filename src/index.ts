@@ -33,7 +33,7 @@ export function setupThreeJSScene(): void {
     function animate() {
         renderer.render(scene, camera);
         for (const tile of terrain.tiles) {
-            const noiseValues = terrain.getValuesAtGridPos(tile.userData.gridPos, frameCount / 100);
+            const noiseValues = terrain.getValuesAtGridPos(tile.userData.gridPos, frameCount / 300);
             tile.position.y = noiseValues.landHeight;
             tile.material = noiseValues.material;
         }
