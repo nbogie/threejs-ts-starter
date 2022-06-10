@@ -1,4 +1,4 @@
-import { BoxGeometry, Color, InstancedMesh, Matrix4, MeshStandardMaterial, PlaneGeometry, Scene } from "three";
+import { Color, Float32BufferAttribute, Mesh, MeshStandardMaterial, PlaneGeometry, Scene } from "three";
 import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise';
 
 export interface NoiseValues {
@@ -27,58 +27,53 @@ export function setupTerrain(scene: Scene, gridSize: number): {
     const noiseScaling = 0.004;
     const verticalScaling = 8;
     const seaLevel = 0; //relative to simplex noise values of -1 to 1
-    let geometry;
-    const usePlanes = Math.random() < 0.5;
-    if (usePlanes) {
-        geometry = new PlaneGeometry(0.95, 0.95);//shared. For best performance consider THREE.InstancedMesh.
-        geometry.rotateX(-Math.PI / 2)
-    } else {
-        geometry = new BoxGeometry(0.95, 0.1, 0.95);//shared. For best performance consider THREE.InstancedMesh.
-    }
 
-    const instancedMesh = new InstancedMesh(geometry,
-        new MeshStandardMaterial(),
-        gridSize * gridSize);
-
-    // instancedMesh.instanceMatrix.setUsage(DynamicDrawUsage); // will be updated every frame
+    const geometry = new PlaneGeometry(100, 100, gridSize - 1, gridSize - 1);
+    geometry.rotateX(-Math.PI / 2)
+    const groundMaterial = new MeshStandardMaterial({
+        color: 0xFFFFFF,
+        vertexColors: true
+    });
+    const mesh = new Mesh(geometry, groundMaterial);
+    scene.add(mesh)
 
     updateTerrain(0);
-    scene.add(instancedMesh)
 
-
-
-    /** Update position and colour of all instances in the instanced mesh, based on the FBM noise for the given time.
+    /** Update position and colour of the terrain, based on the FBM noise for the given time.
      * @param time allows animation over time.
      */
     function updateTerrain(time: number) {
+        //Useful reading: "how to update things"
+        //https://threejs.org/docs/#manual/en/introduction/How-to-update-things
+
+        //The types say geometry.attributes.position.array is read-only, 
+        //but various official examples mutate it. ¯\_(ツ)_/¯
+        const vertices = geometry.attributes.position.array as number[];
+
+        const count = gridSize * gridSize;
+        const colours: number[] = new Array(count * 3)
+
+
         for (let row = 0; row < gridSize; row++) {
             for (let col = 0; col < gridSize; col++) {
-                updateInstancedMeshAtGridPos({ col, row }, time);
+                const nvs = getNoiseValuesAtGridPos({ col, row }, time)
+
+                const ix = 3 * (col + row * gridSize);
+                const yPosIndex = ix + 1; //positions stored as x, y, z - we need the second of those.
+
+                colours[ix + 0] = nvs.colour.r;
+                colours[ix + 1] = nvs.colour.g;
+                colours[ix + 2] = nvs.colour.b;
+
+                vertices[yPosIndex] = nvs.landHeight;
             }
         }
-        instancedMesh.instanceMatrix.needsUpdate = true;
-        if (instancedMesh.instanceColor) {
-            instancedMesh.instanceColor.needsUpdate = true;
-        }
-    }
+        const colourBufferAttribute = new Float32BufferAttribute(colours, 3);
+        geometry.setAttribute('color', colourBufferAttribute);
 
-    /** Update position and colour of ONE instance of the instanced mesh, based on the FBM noise at that position for the given time 
-     * @param gridPos gridPos of instance to update
-     * @param time allows animation over time
-    */
-    function updateInstancedMeshAtGridPos(gridPos: GridPos, time: number) {
-        const noiseVals = getNoiseValuesAtGridPos(gridPos, time);
-
-        const matrix = new Matrix4();
-        matrix.makeTranslation(
-            gridPos.col - gridSize / 2,
-            noiseVals.landHeight + 2,
-            gridPos.row - gridSize / 2
-        );
-
-        const ix = gridPos.row * gridSize + gridPos.col;
-        instancedMesh.setMatrixAt(ix, matrix);
-        instancedMesh.setColorAt(ix, noiseVals.colour);
+        //If you want to change the position data values after the first render, you need to set the needsUpdate flag like so:
+        geometry.attributes.position.needsUpdate = true; // required after the first render
+        geometry.computeVertexNormals();
     }
 
     /** 
