@@ -1,4 +1,4 @@
-import { BoxGeometry, Color, InstancedMesh, Material, Matrix4, MeshStandardMaterial, PlaneGeometry, Scene } from "three";
+import { BoxGeometry, Color, InstancedMesh, Matrix4, MeshStandardMaterial, PlaneGeometry, Scene } from "three";
 import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise';
 
 export interface NoiseValues {
@@ -95,10 +95,6 @@ export function setupTerrain(scene: Scene, gridSize: number): {
         const noiseVal5 = 0.1 * simplex.noise3d(pos.col * noiseScaling * 16, pos.row * noiseScaling * 16, time + 1777);
         const noiseVal = (noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4 + noiseVal5) / 2.3;
         return noiseVal;
-    }
-
-    function getSimpleNoiseValAtGridPos(pos: GridPos, time: number): number {
-        return simplex.noise3d(pos.col * noiseScaling, pos.row * noiseScaling, time);
     }
 
     /** Get noise-based values for the terrain at a given grid position 
