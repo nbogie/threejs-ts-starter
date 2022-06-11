@@ -50,11 +50,10 @@ export function setupTerrain(scene: Scene, gridSize: number, gui: GUI): {
     scene.add(mesh)
     const guiTerrain = gui.addFolder("terrain")
 
-    guiTerrain.add(mesh.position, 'x', -50, 50)
-    guiTerrain.add(options, 'noiseScaling', 0.00001, 0.1)
+    guiTerrain.add(options, 'noiseScaling', 0.00001, 0.01)
     guiTerrain.add(options, 'verticalScaling', 0.00001, 16)
     guiTerrain.add(options, 'noiseAnimSpeed', 0, 8)
-    guiTerrain.add(options, 'scrollSpeed', 0, 3000)
+    guiTerrain.add(options, 'scrollSpeed', 0, 2000)
     guiTerrain.add(options, 'seaLevel', -2, 2)
 
     const folderAmplitudes = guiTerrain.addFolder("fbm-amplitudes");
@@ -64,7 +63,7 @@ export function setupTerrain(scene: Scene, gridSize: number, gui: GUI): {
 
     const folderFrequencies = guiTerrain.addFolder("fbm-frequencies");
     for (let i = 0; i < fbmOptions.amps.length; i++) {
-        folderFrequencies.add(fbmOptions.freqs, i, 0.1, 200);
+        folderFrequencies.add(fbmOptions.freqs, i, 0.1, 1 + i * i * i);
     }
 
     updateTerrain(0);
