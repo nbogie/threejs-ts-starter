@@ -1,5 +1,6 @@
-import { Color, Scene } from 'three';
+import { Clock, Color, Scene } from 'three';
 import { setupCamera } from './setupCamera';
+import { setupGUIWithCamera } from './setupGUIWithCamera';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
@@ -25,15 +26,20 @@ export function setupThreeJSScene(): void {
 
     // setupHelpers(scene);
 
-    const terrain = setupTerrain(scene, 300);
-
-    let frameCount = 0;
+    const gui = setupGUIWithCamera(camera);
+    const terrain = setupTerrain(scene, 300, gui);
+    const clock = new Clock();
 
     animate();
 
     function animate() {
         renderer.render(scene, camera);
-        terrain.updateTerrain(frameCount / 300);
+
+        terrain.updateTerrain(clock.getElapsedTime() * 0.04);
+
+        if (camera.userData.shouldLerp) {
+            camera.position.lerp(camera.userData.desiredPosition, 0.05)
+        }
 
         // required if controls.enableDamping or controls.autoRotate are set to true
         controls.update();
@@ -41,7 +47,6 @@ export function setupThreeJSScene(): void {
         statsPanel.update();
 
         requestAnimationFrame(animate);
-        frameCount++
     }
 }
 

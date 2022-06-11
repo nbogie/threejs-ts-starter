@@ -1,4 +1,6 @@
 import { Color, Float32BufferAttribute, Mesh, MeshStandardMaterial, PlaneGeometry, Scene } from "three";
+//@ts-ignore  - are there no types available for lil-gui?
+import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise';
 
 export interface NoiseValues {
@@ -13,29 +15,57 @@ interface GridPos {
 }
 
 /** Add a grid of tiles (mesh objects) to the given scene, at different heights, to simulate (blocky) terrain.
- * Heights (and colours) are calculated from an open-simplex noise algorithm (from a library).
- */
-export function setupTerrain(scene: Scene, gridSize: number): {
+* Heights (and colours) are calculated from an open-simplex noise algorithm (from a library).
+*/
+export function setupTerrain(scene: Scene, gridSize: number, gui: GUI): {
     updateTerrain: (time: number) => void
 } {
+
+
+    const options = {
+        noiseScaling: 0.004,
+        verticalScaling: 8,
+        noiseAnimSpeed: 0,
+        scrollSpeed: 2600,
+        seaLevel: 0 /*relative to -1 to 1 */
+    };
+
+    const fbmOptions = {
+        amps: [1.5, 0.6, 0.4, 0.2, 0.03, 0.02],
+        freqs: [1, 2, 4, 8, 16, 96],
+    }
     const coloursLookup = createColoursLookup();
 
     // initializing a new simplex instance
     // do this only once as it is relatively expensive
     const simplex = new SimplexNoise()
 
-    const noiseScaling = 0.004;
-    const verticalScaling = 8;
-    const seaLevel = 0; //relative to simplex noise values of -1 to 1
-
     const geometry = new PlaneGeometry(100, 100, gridSize - 1, gridSize - 1);
     geometry.rotateX(-Math.PI / 2)
     const groundMaterial = new MeshStandardMaterial({
         color: 0xFFFFFF,
-        vertexColors: true
+        vertexColors: true,
     });
     const mesh = new Mesh(geometry, groundMaterial);
     scene.add(mesh)
+    const guiTerrain = gui.addFolder("terrain")
+
+    guiTerrain.add(mesh.position, 'x', -50, 50)
+    guiTerrain.add(options, 'noiseScaling', 0.00001, 0.1)
+    guiTerrain.add(options, 'verticalScaling', 0.00001, 16)
+    guiTerrain.add(options, 'noiseAnimSpeed', 0, 8)
+    guiTerrain.add(options, 'scrollSpeed', 0, 3000)
+    guiTerrain.add(options, 'seaLevel', -2, 2)
+
+    const folderAmplitudes = guiTerrain.addFolder("fbm-amplitudes");
+    for (let i = 0; i < fbmOptions.amps.length; i++) {
+        folderAmplitudes.add(fbmOptions.amps, i, 0, 2);
+    }
+
+    const folderFrequencies = guiTerrain.addFolder("fbm-frequencies");
+    for (let i = 0; i < fbmOptions.amps.length; i++) {
+        folderFrequencies.add(fbmOptions.freqs, i, 0.1, 200);
+    }
 
     updateTerrain(0);
 
@@ -87,14 +117,19 @@ export function setupTerrain(scene: Scene, gridSize: number): {
      * 
      * @returns number between -1 and 1, theoretically, though in practice it's unlikely you'll see a value beyond -0.8 to 0.8
      */
+
     function getFBMNoiseValAtGridPos(pos: GridPos, time: number): number {
-        const noiseVal1 = 1.5 * simplex.noise3d(pos.col * noiseScaling, pos.row * noiseScaling, time);
-        const noiseVal2 = 0.6 * simplex.noise3d(pos.col * noiseScaling * 2, pos.row * noiseScaling * 2, time + 777);
-        const noiseVal3 = 0.4 * simplex.noise3d(pos.col * noiseScaling * 4, pos.row * noiseScaling * 4, 3 * time + 999);
-        const noiseVal4 = 0.2 * simplex.noise3d(pos.col * noiseScaling * 8, pos.row * noiseScaling * 8, 4 * time + 1333);
-        const noiseVal5 = 0.03 * simplex.noise3d(pos.col * noiseScaling * 16, pos.row * noiseScaling * 16, 5 * time + 1999);
-        const noiseVal6 = 0.02 * simplex.noise3d(pos.col * noiseScaling * 96, pos.row * noiseScaling * 96, 5 * time + 1777);
-        const noiseVal = (noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4 + noiseVal5 + noiseVal6) / 2.7;
+        const timeAdjusted = time * options.noiseAnimSpeed;
+        const zOffset = -time * options.scrollSpeed;
+
+        const noiseVal1 = fbmOptions.amps[0] * simplex.noise3d(pos.col * options.noiseScaling * fbmOptions.freqs[0], (zOffset + pos.row) * options.noiseScaling * fbmOptions.freqs[0], timeAdjusted);
+        const noiseVal2 = fbmOptions.amps[1] * simplex.noise3d(pos.col * options.noiseScaling * fbmOptions.freqs[1], (zOffset + pos.row) * options.noiseScaling * fbmOptions.freqs[1], timeAdjusted + 777);
+        const noiseVal3 = fbmOptions.amps[2] * simplex.noise3d(pos.col * options.noiseScaling * fbmOptions.freqs[2], (zOffset + pos.row) * options.noiseScaling * fbmOptions.freqs[2], 3 * timeAdjusted + 999);
+        const noiseVal4 = fbmOptions.amps[3] * simplex.noise3d(pos.col * options.noiseScaling * fbmOptions.freqs[3], (zOffset + pos.row) * options.noiseScaling * fbmOptions.freqs[3], 4 * timeAdjusted + 1333);
+        const noiseVal5 = fbmOptions.amps[4] * simplex.noise3d(pos.col * options.noiseScaling * fbmOptions.freqs[4], (zOffset + pos.row) * options.noiseScaling * fbmOptions.freqs[4], 5 * timeAdjusted + 1999);
+        const noiseVal6 = fbmOptions.amps[5] * simplex.noise3d(pos.col * options.noiseScaling * fbmOptions.freqs[5], (zOffset + pos.row) * options.noiseScaling * fbmOptions.freqs[5], 5 * timeAdjusted + 1777);
+        const ampsSum = fbmOptions.amps.reduce((a, c) => a + c)
+        const noiseVal = (noiseVal1 + noiseVal2 + noiseVal3 + noiseVal4 + noiseVal5 + noiseVal6) / ampsSum;
         return noiseVal;
     }
 
@@ -105,26 +140,26 @@ export function setupTerrain(scene: Scene, gridSize: number): {
     */
     function getNoiseValuesAtGridPos(pos: GridPos, time: number): NoiseValues {
         const noiseVal = 2 * getFBMNoiseValAtGridPos(pos, time);
-        const landHeight = (noiseVal < seaLevel ? seaLevel : noiseVal) * verticalScaling;
+        const landHeight = (noiseVal < options.seaLevel ? options.seaLevel : noiseVal) * options.verticalScaling;
         const colour = getColorForNoiseVal(noiseVal);
         return { noiseVal, landHeight, colour }
     }
 
 
     function getColorForNoiseVal(noiseVal: number): Color {
-        if (noiseVal < -0.3) {
+        if (noiseVal < options.seaLevel - 0.3) {
             return coloursLookup.deepWater;
         }
-        if (noiseVal < 0) {
+        if (noiseVal < options.seaLevel) {
             return coloursLookup.shallowWater
         }
-        if (noiseVal < 0.1) {
+        if (noiseVal < options.seaLevel + 0.1) {
             return coloursLookup.sand
         }
-        if (noiseVal < 0.7) {
+        if (noiseVal < options.seaLevel + 0.7) {
             return coloursLookup.grass
         }
-        if (noiseVal < 0.9) {
+        if (noiseVal < options.seaLevel + 0.9) {
             return coloursLookup.rocks
         }
         return coloursLookup.snow
