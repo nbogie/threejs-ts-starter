@@ -23,31 +23,21 @@ export function setupThreeJSScene(): void {
     setupHelpers(scene);
 
     const planeGeometry1 = new PlaneGeometry(30, 30, 30);
+    const material = setupCustomShaderMaterial();
 
-    const layerMeshes: Mesh[] = [];
-    const origMaterial = setupCustomShaderMaterial();
-    for (let layerIx = 0; layerIx < 8; layerIx++) {
-        const material = origMaterial.clone(); //need a separate one so we can supply different uniform values
-        const layerMesh: Mesh = new Mesh(planeGeometry1, material);
-        layerMesh.userData.timeOffset = layerIx * 0.25;
-        layerMesh.position.z = 1 * layerIx;
-        scene.add(layerMesh);
-        layerMeshes.push(layerMesh)
-    }
+    const mesh: Mesh = new Mesh(planeGeometry1, material);
+    mesh.position.z = -2;
+    scene.add(mesh);
 
     const clock = new Clock();
 
     animate();
 
 
-
-
     function animate() {
 
-        for (const layerMesh of layerMeshes) {
-            layerMesh.rotation.z += 0.002;
-            (layerMesh.material as ShaderMaterial).uniforms.u_time.value = layerMesh.userData.timeOffset + clock.getElapsedTime();
-        }
+        mesh.rotation.z += 0.002;
+        (mesh.material as ShaderMaterial).uniforms.uTime.value = clock.getElapsedTime();
 
         //Draw the current scene to the canvas - one frame of animation.
         renderer.render(scene, camera);
