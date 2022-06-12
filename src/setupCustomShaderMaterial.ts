@@ -1,16 +1,20 @@
 import {
-    RawShaderMaterial
+    DoubleSide,
+    ShaderMaterial
 } from 'three';
-//@ts-ignore - these strings will be loaded by parcel as a non-ts part of the build
-import frag from './shaders/two.frag';
-//@ts-ignore - strings loaded by parcel as a non-ts part of the build
-import vert from './shaders/two.vert';
 
-export function setupCustomShaderMaterial(): RawShaderMaterial {
-    const customMaterial = new RawShaderMaterial({
-        vertexShader: vert,
-        fragmentShader: frag
+import gloopVert from './shaders/gloop.vert';
+import gloopFrag from './shaders/gloop.frag';
+
+export function setupCustomShaderMaterial(): ShaderMaterial {
+    const customMaterial = new ShaderMaterial({
+        vertexShader: gloopVert,
+        fragmentShader: gloopFrag,
+        uniforms: {
+            u_time: { value: 0.9 },
+        },
+        transparent: true,
+        side: DoubleSide,
     })
     return customMaterial;
-
 }

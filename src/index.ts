@@ -1,6 +1,4 @@
-import {
-    BoxGeometry, Mesh, Scene
-} from 'three';
+import { Clock, Mesh, PlaneGeometry, Scene, ShaderMaterial } from 'three';
 import { setupCamera } from './setupCamera';
 import { setupCustomShaderMaterial } from './setupCustomShaderMaterial';
 import { setupHelpers } from './setupHelpers';
@@ -24,19 +22,20 @@ export function setupThreeJSScene(): void {
 
     setupHelpers(scene);
 
+    const planeGeometry1 = new PlaneGeometry(30, 30, 30);
 
+    const layerMeshes: Mesh[] = [];
+    const origMaterial = setupCustomShaderMaterial();
+    for (let layerIx = 0; layerIx < 8; layerIx++) {
+        const material = origMaterial.clone(); //need a separate one so we can supply different uniform values
+        const layerMesh: Mesh = new Mesh(planeGeometry1, material);
+        layerMesh.userData.timeOffset = layerIx * 0.25;
+        layerMesh.position.z = 1 * layerIx;
+        scene.add(layerMesh);
+        layerMeshes.push(layerMesh)
+    }
 
-    //Make some shape(s) and add them to the scene
-    const geometry = new BoxGeometry(10, 10, 10);
-    // const material = new MeshStandardMaterial({
-    //     color: 0xff00ff
-    // });
-    const material = setupCustomShaderMaterial();
-    const myShape: Mesh = new Mesh(geometry, material);
-    myShape.position.y = 20;
-    scene.add(myShape);
-
-
+    const clock = new Clock();
 
     animate();
 
@@ -44,8 +43,11 @@ export function setupThreeJSScene(): void {
 
 
     function animate() {
-        myShape.rotation.y += 0.01;
-        myShape.rotation.x += 0.02;
+
+        for (const layerMesh of layerMeshes) {
+            layerMesh.rotation.z += 0.002;
+            (layerMesh.material as ShaderMaterial).uniforms.u_time.value = layerMesh.userData.timeOffset + clock.getElapsedTime();
+        }
 
         //Draw the current scene to the canvas - one frame of animation.
         renderer.render(scene, camera);
