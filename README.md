@@ -1,3 +1,7 @@
+An example of a custom shader on a stack of planes, each fed slightly different uniform values.
+
+---
+
 A set of examples using Three.js and Typescript bundled with parcel 🚀🔥.
 
 Modified from Alberto Adrián Pucheta's repo: https://github.com/adrianrey05/parcel-typescript-threejs
