@@ -1,10 +1,8 @@
 import {
-    Scene,
-    Mesh,
-    MeshStandardMaterial,
-    BoxGeometry,
+    BoxGeometry, Mesh, Scene
 } from 'three';
 import { setupCamera } from './setupCamera';
+import { setupCustomShaderMaterial } from './setupCustomShaderMaterial';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
@@ -30,10 +28,10 @@ export function setupThreeJSScene(): void {
 
     //Make some shape(s) and add them to the scene
     const geometry = new BoxGeometry(10, 10, 10);
-    const material = new MeshStandardMaterial({
-        color: 0xff00ff
-    });
-
+    // const material = new MeshStandardMaterial({
+    //     color: 0xff00ff
+    // });
+    const material = setupCustomShaderMaterial();
     const myShape: Mesh = new Mesh(geometry, material);
     myShape.position.y = 20;
     scene.add(myShape);
