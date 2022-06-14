@@ -1,10 +1,11 @@
 
 import { Mesh, Scene } from 'three';
+import { createHeightField } from './physicsHeightfieldUtils';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
-import { alignMeshToItsBody, createGroundBodyAndMesh, createRandomBoxBodyAndMesh, fireProjectile, setupPhysics, toggleGravity } from './setupPhysics';
+import { alignMeshToItsBody, createRandomBallBodyAndMesh, fireProjectile, setupPhysics, toggleGravity } from './setupPhysics';
 import { setupRenderer } from './setupRenderer';
 import { setupStatsPanel } from './setupStatsPanel';
 export function setupThreeJSScene(): void {
@@ -26,17 +27,19 @@ export function setupThreeJSScene(): void {
     setupHelpers(scene);
 
     const { world } = setupPhysics();
-    const { groundMesh } = createGroundBodyAndMesh(world, scene);
+    // const { groundMesh } = createGroundBodyAndMesh(world, scene);
+    createHeightField(world, scene, 50, (x, y) => 1.5 * Math.cos(x / 3) + 5 * Math.sin(y / 3));
 
-    const cubeMeshes: Mesh[] = [];
+    const ballMeshes: Mesh[] = [];
+
     //make a new cube periodically 
     setInterval(() => {
-        cubeMeshes.push(createRandomBoxBodyAndMesh(world, scene));
+        ballMeshes.push(createRandomBallBodyAndMesh(world, scene));
     }, 300);
 
     document.addEventListener("mousedown", () => {
         const projectileMesh = fireProjectile(world, scene, camera)
-        cubeMeshes.push(projectileMesh)
+        ballMeshes.push(projectileMesh)
     })
     document.addEventListener("keydown", (event) => {
         if (event.key === "g") {
@@ -48,11 +51,11 @@ export function setupThreeJSScene(): void {
     function animate() {
         world.fixedStep(); // 1/60th of second, adjusted for delays.
 
-        for (const mesh of cubeMeshes) {
+        for (const mesh of ballMeshes) {
             alignMeshToItsBody(mesh);
         }
 
-        alignMeshToItsBody(groundMesh);
+        // alignMeshToItsBody(groundMesh);
         //Draw the current scene to the canvas - one frame of animation.
         renderer.render(scene, camera);
 

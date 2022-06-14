@@ -1,7 +1,6 @@
 import * as CANNON from 'cannon-es';
 import { Body, World } from 'cannon-es';
-import { Camera, Color, DoubleSide, Mesh, MeshStandardMaterial, PlaneGeometry, Quaternion, Scene, Vector3 } from "three";
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
+import { Camera, Color, DoubleSide, Mesh, MeshStandardMaterial, PlaneGeometry, Quaternion, Scene, SphereGeometry, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
 
@@ -43,11 +42,11 @@ export function createGroundBodyAndMesh(world: World, scene: Scene): { groundBod
  * 
  * @returns the created three.js mesh, with a reference to the physics body stored in mesh.userData.body
  */
-export function createRandomBoxBodyAndMesh(world: World,
+export function createRandomBallBodyAndMesh(world: World,
     scene: Scene): Mesh {
 
-    const body = createRandomBoxBody(world);
-    const mesh = createBoxMeshForBody(body, scene)
+    const body = createRandomBallBody(world);
+    const mesh = createBallMeshForBody(body, scene)
     mesh.userData.body = body;
     return mesh
 }
@@ -57,15 +56,16 @@ export function createRandomBoxBodyAndMesh(world: World,
  @param world the world to add the new body to
  @returns the created body
  */
-function createRandomBoxBody(world: World): Body {
+function createRandomBallBody(world: World): Body {
 
     const dimensions = new CANNON.Vec3(randFloat(0.3, 0.8), randFloat(0.3, 0.8), randFloat(0.3, 0.8));
 
     const body = new Body({
         mass: 30,
-        shape: new CANNON.Box(dimensions)
+        shape: new CANNON.Sphere(dimensions.x)
     });
-    body.position.set(randFloatSpread(10), randFloat(5, 15), randFloatSpread(10));
+    body.position.set(randFloatSpread(40), randFloat(11, 13), randFloatSpread(40));
+
     body.velocity.set(0, 0, 0);
 
     body.angularVelocity.copy(new CANNON.Vec3(randFloatSpread(0.5), randFloatSpread(0.5), randFloatSpread(0.5)).scale(10));
@@ -82,7 +82,7 @@ function createRandomBoxBody(world: World): Body {
  * @returns a three.js mesh, already added to the scene, but which will need to be updated each frame to match the body's changed position and orientation.
  * 
  */
-function createBoxMeshForBody(body: Body, scene: Scene): Mesh {
+function createBallMeshForBody(body: Body, scene: Scene): Mesh {
     const colourStrings = [
         "#fc354c",
         "#29221f",
@@ -92,13 +92,13 @@ function createBoxMeshForBody(body: Body, scene: Scene): Mesh {
     ];
     const color = new Color(pick(colourStrings));
 
-    const bodyShape = body.shapes[0] as CANNON.Box;
-    console.assert(bodyShape.type === 4, "given body should have box shape", bodyShape);
-    const { x: w, y: h, z: d } = bodyShape.halfExtents;
+    const bodyShape = body.shapes[0] as CANNON.Sphere;
+    console.assert(bodyShape.type === CANNON.Shape.types.SPHERE, "given body should have sphere shape", bodyShape);
+    const r = bodyShape.radius;
     //We ought to reuse geometry and material for better performance.
 
     //The physical box doesn't have rounded edges, but the visualisation will, to show that they can be different.
-    const geometry = new RoundedBoxGeometry(w * 2, h * 2, d * 2);
+    const geometry = new SphereGeometry(r);
     const material = new MeshStandardMaterial({
         color
     });
@@ -137,7 +137,7 @@ Creates a representative three.js mesh and adds that to the given scene.
 */
 export function fireProjectile(world: World, scene: Scene, camera: Camera): Mesh {
 
-    const projectileMesh = createRandomBoxBodyAndMesh(world, scene);
+    const projectileMesh = createRandomBallBodyAndMesh(world, scene);
 
     //calculate direction - slightly up from camera direction
     const fireDir = new Vector3(); //this will by mutated by getWorldDirection()
