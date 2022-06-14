@@ -1,6 +1,6 @@
 
 import { Mesh, Scene } from 'three';
-import { createHeightField } from './physicsHeightfieldUtils';
+import { createHeightFieldAndMesh } from './physicsHeightfieldUtils';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
@@ -28,7 +28,7 @@ export function setupThreeJSScene(): void {
 
     const { world } = setupPhysics();
     // const { groundMesh } = createGroundBodyAndMesh(world, scene);
-    createHeightField(world, scene, 50, (x, y) => 1.5 * Math.cos(x / 3) + 5 * Math.sin(y / 3));
+    createHeightFieldAndMesh(world, scene, 50, (x, y) => 1.5 * Math.cos(x / 3) + 5 * Math.sin(y / 3));
 
     const ballMeshes: Mesh[] = [];
 

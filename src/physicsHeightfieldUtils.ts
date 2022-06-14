@@ -9,7 +9,7 @@ import { BufferGeometry, Euler, Float32BufferAttribute, Mesh, MeshStandardMateri
  * @param gridSize num positions along one side.  Field will have gridSize * gridSize positions.  
  * @param heightFn callback function called during setup for each x,y position in the field, to determine its height.
  * */
-export function createHeightField(
+export function createHeightFieldAndMesh(
     world: World,
     scene: Scene,
     gridSize: number,
@@ -34,7 +34,7 @@ export function createHeightField(
     const heightfieldBody = new CANNON.Body({ shape: heightfieldShape })
 
     // const geometry = convertHeightfieldToGeometry(heightfieldShape);
-    const geometry = createHeightfieldGeometryCannonES(heightfieldShape)
+    const geometry = convertHeightfieldToGeometry(heightfieldShape)
     const mesh = new Mesh(geometry, new MeshStandardMaterial({ color: 0x998877, flatShading: false }))
 
     heightfieldBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
@@ -59,7 +59,7 @@ export function createHeightField(
  * Create and return a three.js Geometry from a given Heightfield.
  * 
 */
-export function createHeightfieldGeometryCannonES(shape: Heightfield): BufferGeometry {
+export function convertHeightfieldToGeometry(shape: Heightfield): BufferGeometry {
     const geometry = new BufferGeometry()
     const s = shape.elementSize || 1 // assumes square heightfield, else i*x, j*y
     const positions = shape.data.flatMap((row, i) => row.flatMap((z, j) => [i * s, j * s, z]))
