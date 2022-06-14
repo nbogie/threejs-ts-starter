@@ -52,19 +52,17 @@ export function createRandomBallBodyAndMesh(world: World,
 }
 
 
-/** Create a random (invisible) cannon physics body of box shape, and add it to the given physics world.
+/** Create a random (invisible) cannon physics body of sphere shape, and add it to the given physics world.
  @param world the world to add the new body to
  @returns the created body
  */
 function createRandomBallBody(world: World): Body {
 
-    const dimensions = new CANNON.Vec3(randFloat(0.3, 0.8), randFloat(0.3, 0.8), randFloat(0.3, 0.8));
-
     const body = new Body({
         mass: 30,
-        shape: new CANNON.Sphere(dimensions.x)
+        shape: new CANNON.Sphere(randFloat(0.3, 0.8))
     });
-    body.position.set(randFloatSpread(40), randFloat(11, 13), randFloatSpread(40));
+    body.position.set(randFloatSpread(40), randFloat(8, 10), randFloatSpread(40));
 
     body.velocity.set(0, 0, 0);
 
@@ -110,7 +108,7 @@ function createBallMeshForBody(body: Body, scene: Scene): Mesh {
 }
 
 /** Update given mesh to match the position and orientation of the cannon body we assume is stored in mesh.userData.body  */
-export function alignMeshToItsBody(mesh: Mesh): void {
+export function updateMeshAccordingToItsBody(mesh: Mesh): void {
     const body = mesh.userData.body as Body;
     console.assert(body, "mesh.userData.body should not be null.  ", mesh)
     alignMeshToBody(mesh, body);

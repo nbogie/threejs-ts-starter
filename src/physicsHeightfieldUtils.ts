@@ -50,11 +50,9 @@ export function createHeightFieldAndMesh(
 }
 
 
-/*
- *  This function from cannon-es-debugger (MIT licence)
- * https://github.com/pmndrs/cannon-es-debugger/blob/master/src/cannon-es-debugger.ts
- * 
- */
+
+//This function from cannon-es-debugger (MIT licence)
+//https://github.com/pmndrs/cannon-es-debugger/blob/master/src/cannon-es-debugger.ts
 /** 
  * Create and return a three.js Geometry from a given Heightfield.
  * 

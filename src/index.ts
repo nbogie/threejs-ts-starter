@@ -5,7 +5,7 @@ import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
-import { alignMeshToItsBody, createRandomBallBodyAndMesh, fireProjectile, setupPhysics, toggleGravity } from './setupPhysics';
+import { updateMeshAccordingToItsBody, createRandomBallBodyAndMesh, fireProjectile, setupPhysics, toggleGravity } from './setupPhysics';
 import { setupRenderer } from './setupRenderer';
 import { setupStatsPanel } from './setupStatsPanel';
 export function setupThreeJSScene(): void {
@@ -27,15 +27,14 @@ export function setupThreeJSScene(): void {
     setupHelpers(scene);
 
     const { world } = setupPhysics();
-    // const { groundMesh } = createGroundBodyAndMesh(world, scene);
-    createHeightFieldAndMesh(world, scene, 50, (x, y) => 1.5 * Math.cos(x / 3) + 5 * Math.sin(y / 3));
+    createHeightFieldAndMesh(world, scene, 50, (x, y) => 2 + (Math.cos(x / 3) + Math.sin(y / 3)));
 
     const ballMeshes: Mesh[] = [];
 
-    //make a new cube periodically 
     setInterval(() => {
         ballMeshes.push(createRandomBallBodyAndMesh(world, scene));
-    }, 300);
+    }, 1000);
+
 
     document.addEventListener("mousedown", () => {
         const projectileMesh = fireProjectile(world, scene, camera)
@@ -52,7 +51,7 @@ export function setupThreeJSScene(): void {
         world.fixedStep(); // 1/60th of second, adjusted for delays.
 
         for (const mesh of ballMeshes) {
-            alignMeshToItsBody(mesh);
+            updateMeshAccordingToItsBody(mesh);
         }
 
         // alignMeshToItsBody(groundMesh);
