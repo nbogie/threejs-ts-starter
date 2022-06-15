@@ -6,6 +6,7 @@ import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
+import { setupStatsPanel } from './setupStatsPanel';
 import { setupTerrain } from './setupTerrain';
 
 export function setupThreeJSScene(): void {
@@ -19,6 +20,8 @@ export function setupThreeJSScene(): void {
     const controls = setupOrbitControls(camera, renderer.domElement);
 
     const scene = new Scene();
+
+    const statsPanel = setupStatsPanel();
 
     setupLights(scene);
 
@@ -35,6 +38,8 @@ export function setupThreeJSScene(): void {
 
         // required if controls.enableDamping or controls.autoRotate are set to true
         controls.update();
+
+        statsPanel.update();
 
         requestAnimationFrame(animate);
     }
