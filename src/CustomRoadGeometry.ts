@@ -1,6 +1,7 @@
-import { BufferGeometry, CatmullRomCurve3, Color, Float32BufferAttribute, Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import { BufferGeometry, CatmullRomCurve3, Float32BufferAttribute, Mesh, Vector2, Vector3 } from 'three';
 //@ts-ignore
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import { createRoadShaderMaterial } from './customRoadShader';
 
 
 export interface RoadGeomParams {
@@ -11,11 +12,9 @@ export interface RoadGeomParams {
 export function createRoadMeshOnce(params: RoadGeomParams, curve: CatmullRomCurve3): Mesh {
     const geom = calculateGeometryForRoad(params, curve);
     // const material = new MeshNormalMaterial();
-    const material = new MeshStandardMaterial({
-        color: new Color("gray"),
-        wireframe: false
-    });
-    const mesh = new Mesh(geom, material);
+    // const material = new MeshStandardMaterial({ color: new Color("gray"), });
+
+    const mesh = new Mesh(geom, createRoadShaderMaterial());
     return mesh;
 }
 
@@ -31,46 +30,61 @@ export function setupGUIForRoadParams(roadMesh: Mesh, params: RoadGeomParams, gu
 export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullRomCurve3): BufferGeometry {
     const rawVerts: Vector3[] = [];
     const rawNorms: Vector3[] = [];
+    const rawUVs: Vector2[] = [];
+
     const numSegments = Math.floor(params.numSegments);
 
     const w = params.thickness;
+
     const worldUp = new Vector3(0, 1, 0);
-    const perp = new Vector3();
-    const normVec = new Vector3();
+    const perpendicular = new Vector3();
+    const normal = new Vector3();
     for (let i = 0; i < numSegments; i++) {
         const t = i / (numSegments - 1);
         const pt = curve.getPoint(t * 2);//TODO: why *2 ?  this takes T to 2! getPoint wants 0-1
         const tangent = curve.getTangent(t * 2);
-        perp.crossVectors(tangent, worldUp);
-        perp.normalize();
-        const leftOffset = perp.clone().multiplyScalar(w);
-        const rightOffset = perp.clone().multiplyScalar(-w);
+        perpendicular.crossVectors(tangent, worldUp);
+        perpendicular.normalize();
+        const leftOffset = perpendicular.clone().multiplyScalar(w);
+        const rightOffset = perpendicular.clone().multiplyScalar(-w);
 
-        normVec.crossVectors(perp, tangent).normalize();
+        normal.crossVectors(perpendicular, tangent).normalize();
 
         rawVerts.push(leftOffset.add(pt));
         rawVerts.push(rightOffset.add(pt));
 
-        rawNorms.push(normVec.clone());
-        rawNorms.push(normVec.clone());
+        rawNorms.push(normal.clone());
+        rawNorms.push(normal.clone());
+
+        rawUVs.push(new Vector2(0, t));
+        rawUVs.push(new Vector2(1, t));
     }
 
     //copy details in, in their triangle orders.
     const positions: Vector3[] = [];
     const normals: Vector3[] = [];
+    const uvs: Vector2[] = [];
+
     for (let i = 0; i < numSegments - 1; i++) {
         const [a, b, c, d] = rawVerts.slice(i, i + 4)
         positions.push(a, b, c, b, d, c)
 
         const [na, nb, nc, nd] = rawNorms.slice(i, i + 4);
         normals.push(na, nb, nc, nb, nd, nc)
+
+        const [ua, ub, uc, ud] = rawUVs.slice(i, i + 4);
+        uvs.push(ua, ub, uc, ub, ud, uc)
     }
     const posAttr = new Float32BufferAttribute(positions.flatMap(p => [p.x, p.y, p.z]), 3);
     const normAttr = new Float32BufferAttribute(normals.flatMap(p => [p.x, p.y, p.z]), 3);
+    const uvAttr = new Float32BufferAttribute(uvs.flatMap(p => [p.x, p.y]), 2);
     const geom = new BufferGeometry();
     geom.setAttribute("position", posAttr);
-    geom.attributes.position.needsUpdate = true;
     geom.setAttribute("normal", normAttr);
+    geom.setAttribute("uv", uvAttr);
+    geom.attributes.position.needsUpdate = true;
+    geom.attributes.normal.needsUpdate = true;
+    geom.attributes.uv.needsUpdate = true;
 
     // geom.computeVertexNormals();
     return geom;
