@@ -9,6 +9,6 @@ export function setupLights(scene: Scene): void {
     directionalLight2.position.set(-5, 2, -2);
     scene.add(directionalLight2);
 
-    const ambLight = new AmbientLight(0x604040); // soft white light from everywhere
+    const ambLight = new AmbientLight(0x404040); // soft white light from everywhere
     scene.add(ambLight);
 }

@@ -5,5 +5,6 @@ export function setupHelpers(scene: Scene): void {
     axesHelper.position.set(0, 1, 0); //lift up from grid for visibility
     scene.add(axesHelper);
     const gridHelper = new GridHelper(100);
+    gridHelper.position.y -= 0.5;
     scene.add(gridHelper);
 }
