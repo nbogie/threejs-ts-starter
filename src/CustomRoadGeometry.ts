@@ -1,11 +1,6 @@
-import { CatmullRomCurve3, Color, MeshBasicMaterial } from 'three';
-//See https://threejs.org/manual/#en/custom-buffergeometry
-//and for some concepts (though in unity): https://www.youtube.com/watch?v=6xs0Saff940
-
-import { BufferGeometry, Curve, Float32BufferAttribute, Mesh, MeshNormalMaterial, MeshStandardMaterial, Vector3 } from "three";
+import { BufferGeometry, CatmullRomCurve3, Color, Float32BufferAttribute, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 //@ts-ignore
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
-import { randFloat } from 'three/src/math/MathUtils';
 
 
 export interface RoadGeomParams {
@@ -13,31 +8,24 @@ export interface RoadGeomParams {
     thickness: number;
 }
 
-export function createRoadMesh(params: RoadGeomParams, curve: CatmullRomCurve3): Mesh {
+export function createRoadMeshOnce(params: RoadGeomParams, curve: CatmullRomCurve3): Mesh {
     const geom = calculateGeometryForRoad(params, curve);
-    // geom.computeVertexNormals();
     // const material = new MeshNormalMaterial();
-    // const material = new MeshStandardMaterial({ color: new Color("orange"), wireframe: true });
-    const material = new MeshBasicMaterial({ color: new Color("orange"), wireframe: true });
-    const mesh = new Mesh(geom, material);//{ color: 0xFFFF00 }
+    const material = new MeshStandardMaterial({
+        color: new Color("gray"),
+        wireframe: false
+    });
+    const mesh = new Mesh(geom, material);
     return mesh;
 }
 
-export function setupGUI(roadMesh: Mesh, params: RoadGeomParams, gui: GUI) {
-
-    const matOptions = {
-        isNormal: true,
-        applyStandard: () => roadMesh.material = new MeshStandardMaterial({ color: 0xFF00FF }),
-        setWireframe: () => (roadMesh.material as MeshStandardMaterial).wireframe = true
-    }
+export function setupGUIForRoadParams(roadMesh: Mesh, params: RoadGeomParams, gui: GUI): void {
     function recalcGeom() {
         roadMesh.geometry = calculateGeometryForRoad(params, roadMesh.userData.curve);
     }
     gui.add(params, "numSegments", 4, 200, 2).onChange(recalcGeom);
     gui.add(params, "thickness", 0.2, 10).onChange(recalcGeom);
     gui.add(roadMesh.material, "wireframe")
-    gui.add(matOptions, "applyStandard")
-    gui.add(matOptions, "setWireframe")
 }
 
 export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullRomCurve3): BufferGeometry {
@@ -46,15 +34,25 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
     const numSegments = Math.floor(params.numSegments);
 
     const w = params.thickness;
+    const worldUp = new Vector3(0, 1, 0);
+    const perp = new Vector3();
+    const normVec = new Vector3();
     for (let i = 0; i < numSegments; i++) {
         const t = i / (numSegments - 1);
         const pt = curve.getPoint(t * 2);//TODO: why *2 ?  this takes T to 2! getPoint wants 0-1
+        const tangent = curve.getTangent(t * 2);
+        perp.crossVectors(tangent, worldUp);
+        perp.normalize();
+        const leftOffset = perp.clone().multiplyScalar(w);
+        const rightOffset = perp.clone().multiplyScalar(-w);
 
-        rawVerts.push(new Vector3(pt.x - w, pt.y, pt.z));
-        rawVerts.push(new Vector3(pt.x + w, pt.y, pt.z));
+        normVec.crossVectors(perp, tangent).normalize();
 
-        rawNorms.push(new Vector3(0, 1, 0));
-        rawNorms.push(new Vector3(0, 1, 0));
+        rawVerts.push(leftOffset.add(pt));
+        rawVerts.push(rightOffset.add(pt));
+
+        rawNorms.push(normVec.clone());
+        rawNorms.push(normVec.clone());
     }
 
     //copy details in, in their triangle orders.
@@ -68,11 +66,26 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
         normals.push(na, nb, nc, nb, nd, nc)
     }
     const posAttr = new Float32BufferAttribute(positions.flatMap(p => [p.x, p.y, p.z]), 3);
-    // const normAttr = new Float32BufferAttribute(normals.flatMap(p => [p.x, p.y, p.z]), 3);
+    const normAttr = new Float32BufferAttribute(normals.flatMap(p => [p.x, p.y, p.z]), 3);
     const geom = new BufferGeometry();
     geom.setAttribute("position", posAttr);
     geom.attributes.position.needsUpdate = true;
+    geom.setAttribute("normal", normAttr);
 
-    // geom.setAttribute("normal", normAttr);
+    // geom.computeVertexNormals();
     return geom;
+}
+
+
+
+export function makeCurveFromControlPositions(controlPointMeshes: Mesh[], params: RoadGeomParams): CatmullRomCurve3 {
+    //These position objects are importantly shared between the control-point meshes and the curve
+    const controlPositions: Vector3[] = controlPointMeshes.map(mesh => mesh.position);
+
+    const curve: CatmullRomCurve3 = new CatmullRomCurve3(controlPositions, false);
+    const points = curve.getPoints(params.numSegments - 1);
+
+    // curve.updateArcLengths();
+    console.log("making curve: ", { points, params, curve })
+    return curve;
 }

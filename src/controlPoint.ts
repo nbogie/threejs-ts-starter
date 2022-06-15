@@ -1,4 +1,4 @@
-import { Color, Mesh, MeshStandardMaterial, Object3D, SphereGeometry } from "three";
+import { Color, Mesh, MeshStandardMaterial, Scene, SphereGeometry } from "three";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { Font, FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { randFloatSpread } from "three/src/math/MathUtils";
@@ -14,16 +14,16 @@ export async function loadFont(): Promise<Font> {
 }
 export function makeControlPointSphere(colourString: string, ix: number, font: Font): Mesh {
 
-    const geometry = new SphereGeometry(5, 8, 8);
+    const geometry = new SphereGeometry(1, 8, 8);
     const material = new MeshStandardMaterial({
         color: new Color(colourString),
         flatShading: true
     });
     const mesh: Mesh = new Mesh(geometry, material);
 
-    const textGeom = new TextGeometry((1 + ix) + "", { font: font, size: 4, height: 2, curveSegments: 12 });
+    const textGeom = new TextGeometry((1 + ix) + "", { font: font, size: 2, height: 0.5, curveSegments: 12 });
     const text = new Mesh(textGeom, new MeshStandardMaterial({ color: "white" }));
-    text.position.x += 6;
+    text.position.x += 2;
     mesh.position.x = randFloatSpread(50)
     mesh.position.y = randFloatSpread(50)
     mesh.position.z = randFloatSpread(50)
@@ -31,3 +31,11 @@ export function makeControlPointSphere(colourString: string, ix: number, font: F
     return mesh;
 }
 
+
+export async function makeControlPointMeshes(scene: Scene): Promise<Mesh[]> {
+    const font = await loadFont();
+    const meshes = ["red", "green", "blue", "yellow"]
+        .map((c, ix) => makeControlPointSphere(c, ix, font))
+    scene.add(...meshes);
+    return meshes;
+}
