@@ -97,7 +97,7 @@ export async function setupThreeJSScene(): Promise<void> {
         renderer.render(scene, camera);
         statsPanel.update();
 
-        const animFrac = (clock.getElapsedTime() / 10) % 1;
+        const animFrac = (clock.getElapsedTime() / 20) % 1;
         positionAndOrientCarOnCurve(carMesh, curve, animFrac);
 
         //update camera (either leave it to orbit controls or have it chase car)
