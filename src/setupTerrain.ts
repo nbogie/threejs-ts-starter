@@ -11,16 +11,19 @@ export function setupTerrain(scene: Scene): void {
     const simplex = new SimplexNoise()
 
     const gridSize = 100;
-    const noiseScaling = 0.05;
-    const verticalScaling = 3;
+    const noiseScaling = 0.02;
+    const verticalScaling = 6;
     const seaLevel = 0; //relative to simplex noise values of -1 to 1
-    const geometry = new BoxGeometry(1, 0.1, 1);
+    const geometry = new BoxGeometry(1, 1, 1);
 
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
 
             //Get a noise value to use for tile's terrain height and colour
-            const noiseVal = simplex.noise3d(col * noiseScaling, row * noiseScaling, 0);
+            const noiseVal = 1.5 * fbmNoise(col, row);
+
+            //(beginners, seek to understand this simpler alternative, first)
+            // const noiseVal = simplestNoise(col, row);
 
             const colourName = getColourNameForNoiseVal(noiseVal);
             const material = new MeshStandardMaterial({
@@ -39,6 +42,27 @@ export function setupTerrain(scene: Scene): void {
 
             scene.add(oneTileMesh);
         }
+    }
+    function simplestNoise(col: number, row: number): number {
+        return simplex.noise3d(col * noiseScaling, row * noiseScaling, 0);
+    }
+
+    //get a noise value for a position by summing layers of different-frequency noise
+    //See "fractal brownian motion": https://thebookofshaders.com/13/
+    function fbmNoise(col: number, row: number): number {
+        let total = 0;
+        let ampSum = 0;
+        let amp = 1;
+        let freq = 1;
+        const numLayers = 6;
+        for (let layerIx = 0; layerIx < numLayers; layerIx++) {
+            const n = amp * simplex.noise3d(col * noiseScaling * freq, row * noiseScaling * freq, 0);
+            total += n;
+            ampSum += amp;
+            freq = freq * 2;
+            amp *= 0.5;
+        }
+        return total / ampSum;
     }
 }
 
