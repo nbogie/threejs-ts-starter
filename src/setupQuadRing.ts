@@ -1,4 +1,7 @@
-import { BufferGeometry, Color, Float32BufferAttribute, Mesh, MeshNormalMaterial, MeshStandardMaterial, Vector3 } from "three";
+//See https://threejs.org/manual/#en/custom-buffergeometry
+//and for some concepts (though in unity): https://www.youtube.com/watch?v=6xs0Saff940
+
+import { BufferGeometry, Float32BufferAttribute, Mesh, MeshNormalMaterial, Vector3 } from "three";
 export function createQuadRing(): Mesh {
 
     const geom = calculateMeshGeometry({ numSegments: 100, thickness: 4, radius: 15, spiralGain: 5 });
