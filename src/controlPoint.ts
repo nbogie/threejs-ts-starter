@@ -12,7 +12,7 @@ export async function loadFont(): Promise<Font> {
     });
     return p;
 }
-export function makeControlPointSphere(colourString: string, ix: number, font: Font): Object3D {
+export function makeControlPointSphere(colourString: string, ix: number, font: Font): Mesh {
 
     const geometry = new SphereGeometry(5, 8, 8);
     const material = new MeshStandardMaterial({
