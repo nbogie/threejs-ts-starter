@@ -6,6 +6,7 @@ export function createRoadShaderMaterial(): ShaderMaterial {
     return shaderMaterial;
 }
 
+//https://threejs.org/docs/?q=webgl#api/en/renderers/webgl/WebGLProgram
 export function createRoadShader(): { vertexShader: string, fragmentShader: string } {
     const vertexShader = /* glsl */`
     varying vec2 vUV;
