@@ -3,15 +3,14 @@ import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { Font, FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { randFloatSpread } from "three/src/math/MathUtils";
 
-export async function loadFont(): Promise<Font> {
-    const fontLoader = new FontLoader();
-    const p: Promise<Font> = new Promise((resolve, reject) => {
-        //TODO: this is already distributed in the npm package three.  Load from there.
-        fontLoader.load('./assets/helvetiker_bold.typeface.json', (f: Font) => resolve(f)
-        );
-    });
-    return p;
+export async function makeControlPointMeshes(scene: Scene): Promise<Mesh[]> {
+    const font = await loadFont();
+    const meshes = ["red", "green", "blue", "yellow"]
+        .map((c, ix) => makeControlPointSphere(c, ix, font))
+    scene.add(...meshes);
+    return meshes;
 }
+
 export function makeControlPointSphere(colourString: string, ix: number, font: Font): Mesh {
 
     const geometry = new SphereGeometry(1, 8, 8);
@@ -32,10 +31,12 @@ export function makeControlPointSphere(colourString: string, ix: number, font: F
 }
 
 
-export async function makeControlPointMeshes(scene: Scene): Promise<Mesh[]> {
-    const font = await loadFont();
-    const meshes = ["red", "green", "blue", "yellow"]
-        .map((c, ix) => makeControlPointSphere(c, ix, font))
-    scene.add(...meshes);
-    return meshes;
+export async function loadFont(): Promise<Font> {
+    const fontLoader = new FontLoader();
+    const p: Promise<Font> = new Promise((resolve, reject) => {
+        //TODO: this is already distributed in the npm package three.  Load from there.
+        fontLoader.load('./assets/helvetiker_bold.typeface.json', (f: Font) => resolve(f)
+        );
+    });
+    return p;
 }
