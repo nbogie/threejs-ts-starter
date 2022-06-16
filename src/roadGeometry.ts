@@ -1,5 +1,6 @@
 import { BufferGeometry, CatmullRomCurve3, Color, DoubleSide, Float32BufferAttribute, Mesh, MeshNormalMaterial, MeshStandardMaterial, Vector2, Vector3 } from 'three';
-import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
+// import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
+import { MyVertexNormalsHelper } from "./MyVertexNormalsHelper";
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { createRoadShaderMaterial } from './roadShader';
 export interface RoadGeomParams {
@@ -110,7 +111,7 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
 }
 
 
-export function setupGUIForRoadParams(roadMesh: Mesh, params: RoadGeomParams, vertexNormalsHelper: VertexNormalsHelper, gui: GUI): void {
+export function setupGUIForRoadParams(roadMesh: Mesh, params: RoadGeomParams, vertexNormalsHelper: MyVertexNormalsHelper, gui: GUI): void {
     function recalcGeom() {
         roadMesh.geometry = calculateGeometryForRoad(params, roadMesh.userData.curve);
         //TODO: vertexNormalsHelper currently has a static number of positions.
