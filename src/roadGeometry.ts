@@ -1,7 +1,6 @@
-import { BufferGeometry, CatmullRomCurve3, Float32BufferAttribute, Mesh, Vector2, Vector3 } from 'three';
+import { BufferGeometry, CatmullRomCurve3, Color, DoubleSide, Float32BufferAttribute, Mesh, MeshNormalMaterial, MeshStandardMaterial, Vector2, Vector3 } from 'three';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { createRoadShaderMaterial } from './roadShader';
-import { logJSONToHTML } from "./pageUtils"
 export interface RoadGeomParams {
     numSegments: number;
     thickness: number;
@@ -20,10 +19,13 @@ export function makeCurveFromControlPositions(controlPointMeshes: Mesh[], params
 
 export function createRoadMeshOnce(params: RoadGeomParams, curve: CatmullRomCurve3): Mesh {
     const geom = calculateGeometryForRoad(params, curve);
-    // const material = new MeshNormalMaterial();
-    // const material = new MeshStandardMaterial({ color: new Color("gray"), });
 
-    const mesh = new Mesh(geom, createRoadShaderMaterial());
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const materialNormal = new MeshNormalMaterial();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const materialStandard = new MeshStandardMaterial({ color: new Color("gray"), side: DoubleSide });
+    const materialCustomShader = createRoadShaderMaterial();
+    const mesh = new Mesh(geom, materialCustomShader);
     return mesh;
 }
 
@@ -45,8 +47,8 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
         const tangent = curve.getTangent(t);
         perpendicular.crossVectors(tangent, worldUp);
         perpendicular.normalize();
-        const leftOffset = perpendicular.clone().multiplyScalar(w);
-        const rightOffset = perpendicular.clone().multiplyScalar(-w);
+        const leftOffset = perpendicular.clone().multiplyScalar(-w);
+        const rightOffset = perpendicular.clone().multiplyScalar(w);
 
         normal.crossVectors(perpendicular, tangent).normalize();
 
@@ -65,14 +67,16 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
     const normals: Vector3[] = [];
     const uvs: Vector2[] = [];
 
+    //step through the vertices, selecting a,b,c,d so that a is the left hand vertex of a new set.
+    //note that we step through with a stride of 2, as there are two verts/norms/uvs in the arrays at each segment
     for (let i = 0; i < numSegments - 1; i++) {
-        const [a, b, c, d] = rawVerts.slice(i, i + 4)
+        const [a, b, c, d] = rawVerts.slice(i * 2, i * 2 + 4)
         positions.push(a, b, c, b, d, c)
 
-        const [na, nb, nc, nd] = rawNorms.slice(i, i + 4);
+        const [na, nb, nc, nd] = rawNorms.slice(i * 2, i * 2 + 4);
         normals.push(na, nb, nc, nb, nd, nc)
 
-        const [ua, ub, uc, ud] = rawUVs.slice(i, i + 4);
+        const [ua, ub, uc, ud] = rawUVs.slice(i * 2, i * 2 + 4);
         uvs.push(ua, ub, uc, ub, ud, uc)
     }
     const posAttr = new Float32BufferAttribute(positions.flatMap(p => [p.x, p.y, p.z]), 3);
@@ -82,15 +86,6 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
     geom.setAttribute("position", posAttr);
     geom.setAttribute("normal", normAttr);
     geom.setAttribute("uv", uvAttr);
-    logJSONToHTML({
-        positionAttrCount: geom.attributes.position.count,
-        positionAttrCountDiv3: geom.attributes.position.count / 3,
-        numSegments,
-        rawVertsLength: rawVerts.length,
-        posAttrCount: posAttr.count,
-        uvAttrCount: uvAttr.count,
-        normAttrCount: normAttr.count
-    })
 
     geom.attributes.position.needsUpdate = true;
     geom.attributes.normal.needsUpdate = true;
