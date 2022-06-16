@@ -43,6 +43,7 @@ export function setupTerrain(scene: Scene): void {
             scene.add(oneTileMesh);
         }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function simplestNoise(col: number, row: number): number {
         return simplex.noise3d(col * noiseScaling, row * noiseScaling, 0);
     }
