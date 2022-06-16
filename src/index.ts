@@ -1,5 +1,5 @@
 import { CatmullRomCurve3, Clock, Group, Mesh, Scene } from 'three';
-//@ts-ignore  - no types?
+
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { poscar as positionAndOrientCarOnCurve, setupCarOnRoad } from './car';
 import { makeControlPointMeshes } from './controlPoint';
