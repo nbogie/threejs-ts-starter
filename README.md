@@ -36,10 +36,19 @@ yarn run build
   - e.g. have a shader represent 0.0, 0.1, 0.2, 0.9 as one of ten colours
 - remove normals and UVs so that the BufferGeometry is as simple as possible
 
-# TODO:
+# TODO list:
 
-- allow user to upload a gltf as a vehicle model and have it "race"
-- on switching to wireframe mode, use a standard material or custom shader that makes wireframe clear.
-- export tracks to text (e.g. to data URLs)
-- add some slight sinusoidal vehicle movement as it follows the curve.
-- have car wait at start for a couple of seconds.
+### tech debt TODOs
+
+- Look for ways to reuse geometry (and curve) rather than creating new each time
+- Proper cleanup of vertex-normals helper.
+
+## fun TODOs
+
+- Allow user to upload a gltf as a vehicle model and have it "race"
+- Add a blender roller-coaster carriage model - have it fade in certain hands-up animations when the passengers are overlooking a drop.
+- Put a ragdoll passenger in the car.
+- On switching to wireframe mode, use a standard material or custom shader that makes wireframe clear.
+- Export tracks to text (e.g. to data URLs)
+- Add some slight sinusoidal vehicle movement as it follows the curve.
+- Have car wait at start for a couple of seconds.
