@@ -1,8 +1,8 @@
-import { ShaderMaterial } from "three";
+import { DoubleSide, ShaderMaterial } from "three";
 
 export function createRoadShaderMaterial(): ShaderMaterial {
     const { vertexShader, fragmentShader } = createRoadShader();
-    const shaderMaterial = new ShaderMaterial({ vertexShader, fragmentShader })
+    const shaderMaterial = new ShaderMaterial({ vertexShader, fragmentShader, side: DoubleSide })
     return shaderMaterial;
 }
 
