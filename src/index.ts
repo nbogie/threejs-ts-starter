@@ -1,5 +1,4 @@
 import { Mesh, MeshStandardMaterial, Scene } from 'three';
-//@ts-ignore  - no types?
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
@@ -50,7 +49,6 @@ export function setupThreeJSScene(): void {
     gui.add(quadRingMesh.material, "wireframe")
     gui.add(matOptions, "applyStandard")
     gui.add(matOptions, "setWireframe")
-
     animate();
 
     function animate() {
