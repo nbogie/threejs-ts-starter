@@ -1,11 +1,10 @@
 import { CatmullRomCurve3, Clock, Group, Mesh, Scene } from 'three';
-
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { positionAndOrientCarOnCurve, setupCarOnRoad } from './car';
 import { makeControlPointMeshes } from './controlPoint';
-import { calculateGeometryForRoad, createRoadMeshOnce, makeCurveFromControlPositions, RoadGeomParams, setupGUIForRoadParams } from './roadGeometry';
 import { logJSONToHTML } from './pageUtils';
 import { randomWorldPos } from './randomUtils';
+import { calculateGeometryForRoad, createRoadMeshOnce, makeCurveFromControlPositions, RoadGeomParams, setupGUIForRoadParams } from './roadGeometry';
 import { setupCamera } from './setupCamera';
 import { DragAndOrbitControlSettings, setupDragControls } from './setupDragControls';
 import { setupHelpers } from './setupHelpers';
@@ -13,8 +12,6 @@ import { createSpotlights, positionSpotlightsAbove, setupLights } from './setupL
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
 import { setupStatsPanel } from './setupStatsPanel';
-
-
 
 export async function setupThreeJSScene(): Promise<void> {
     const statsPanel = setupStatsPanel();
@@ -124,11 +121,7 @@ export async function setupThreeJSScene(): Promise<void> {
         roadMesh.userData.curve = curve;
         roadMesh.geometry = calculateGeometryForRoad(roadParams, roadMesh.userData.curve)
     }
-
-
 }
-
-
 
 setupThreeJSScene();
 
