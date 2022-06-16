@@ -44,7 +44,7 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
     const normal = new Vector3();
     for (let i = 0; i < numSegments; i++) {
         const t = i / (numSegments - 1);
-        const pt = curve.getPoint(t);//TODO: why *2 ?  this takes T to 2! getPoint wants 0-1
+        const pt = curve.getPoint(t);
         const tangent = curve.getTangent(t);
         perpendicular.crossVectors(tangent, worldUp);
         perpendicular.normalize();
@@ -62,32 +62,45 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
         rawUVs.push(new Vector2(0, t));
         rawUVs.push(new Vector2(1, t));
     }
+    /*
+    Triangulation order
+     
+    etc...
+    etc...
+    | \|
+    6--7
+    |\ |
+    | \|
+    4--5    <-- segment 2
+    |\ |
+    | \|
+    2--3    <-- segment 1
+    |\ |
+    | \|
+    0--1    <-- segment 0
 
-    //copy details in, in their triangle orders.
-    const positions: Vector3[] = [];
-    const normals: Vector3[] = [];
-    const uvs: Vector2[] = [];
+    So sequence in which geometry should read through vertices to form triangles is:
+    0,1,2 (triangle 1), then 1, 3, 2 (triangle 2), then repeating, but offset by 2: (2, 3, 4), (3, 5, 4)...
+    */
 
-    //step through the vertices, selecting a,b,c,d so that a is the left hand vertex of a new set.
-    //note that we step through with a stride of 2, as there are two verts/norms/uvs in the arrays at each segment
+    //Make geometry index which will be used to compose triangles by stepping over the existing vertex data.
+    const indices: number[] = [];
+    //Note: There are two triangles starting at each segment EXCEPT the last segment, hence numSegments - 1
     for (let i = 0; i < numSegments - 1; i++) {
-        const [a, b, c, d] = rawVerts.slice(i * 2, i * 2 + 4)
-        positions.push(a, b, c, b, d, c)
-
-        const [na, nb, nc, nd] = rawNorms.slice(i * 2, i * 2 + 4);
-        normals.push(na, nb, nc, nb, nd, nc)
-
-        const [ua, ub, uc, ud] = rawUVs.slice(i * 2, i * 2 + 4);
-        uvs.push(ua, ub, uc, ub, ud, uc)
+        const offset = i * 2;
+        indices.push(0 + offset, 1 + offset, 2 + offset, 1 + offset, 3 + offset, 2 + offset)
     }
-    const posAttr = new Float32BufferAttribute(positions.flatMap(p => [p.x, p.y, p.z]), 3);
-    const normAttr = new Float32BufferAttribute(normals.flatMap(p => [p.x, p.y, p.z]), 3);
-    const uvAttr = new Float32BufferAttribute(uvs.flatMap(p => [p.x, p.y]), 2);
+
+    const posAttr = new Float32BufferAttribute(rawVerts.flatMap(p => [p.x, p.y, p.z]), 3);
+    const normAttr = new Float32BufferAttribute(rawNorms.flatMap(p => [p.x, p.y, p.z]), 3);
+    const uvAttr = new Float32BufferAttribute(rawUVs.flatMap(p => [p.x, p.y]), 2);
     const geom = new BufferGeometry();
     geom.setAttribute("position", posAttr);
     geom.setAttribute("normal", normAttr);
     geom.setAttribute("uv", uvAttr);
+    geom.setIndex(indices);
 
+    //TODO: I think these don't need set to needsUpdate if we've only just created the geom
     geom.attributes.position.needsUpdate = true;
     geom.attributes.normal.needsUpdate = true;
     geom.attributes.uv.needsUpdate = true;
@@ -97,15 +110,12 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
 }
 
 
-
-
-
 export function setupGUIForRoadParams(roadMesh: Mesh, params: RoadGeomParams, vertexNormalsHelper: VertexNormalsHelper, gui: GUI): void {
     function recalcGeom() {
         roadMesh.geometry = calculateGeometryForRoad(params, roadMesh.userData.curve);
         vertexNormalsHelper.update();
     }
-    gui.add(params, "numSegments", 4, 200, 2).onChange(recalcGeom);
+    gui.add(params, "numSegments", 4, 300, 2).onChange(recalcGeom);
     gui.add(params, "thickness", 0.2, 10).onChange(recalcGeom);
     gui.add(roadMesh.material, "wireframe")
     gui.add(vertexNormalsHelper, "visible").name("show normals");
