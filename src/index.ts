@@ -5,6 +5,7 @@ import {
     BoxGeometry,
 } from 'three';
 import { setupCamera } from './setupCamera';
+// import { setupGUIExample } from './setupGUIExample';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
@@ -26,7 +27,7 @@ export function setupThreeJSScene(): void {
 
     setupHelpers(scene);
 
-
+    //setupGUIExample(scene);
 
     //Make some shape(s) and add them to the scene
     const geometry = new BoxGeometry(10, 10, 10);
