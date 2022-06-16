@@ -46,20 +46,19 @@ export function calculateGeometryForRing(params: RingParams): BufferGeometry {
     }
 
     //copy details in, in their triangle orders.
-    const positions: Vector3[] = [];
-    const normals: Vector3[] = [];
-    for (let i = 0; i < numSegments - 1; i++) {
-        const [a, b, c, d] = rawVerts.slice(i * 2, i * 2 + 4)
-        positions.push(a, b, c, b, d, c)
-
-        const [na, nb, nc, nd] = rawNorms.slice(i * 2, i * 2 + 4);
-        normals.push(na, nb, nc, nb, nd, nc)
-    }
-    const posAttr = new Float32BufferAttribute(positions.flatMap(p => [p.x, p.y, p.z]), 3);
-    const normAttr = new Float32BufferAttribute(normals.flatMap(p => [p.x, p.y, p.z]), 3);
+    const posAttr = new Float32BufferAttribute(rawVerts.flatMap(p => [p.x, p.y, p.z]), 3);
+    const normAttr = new Float32BufferAttribute(rawNorms.flatMap(p => [p.x, p.y, p.z]), 3);
     const geom = new BufferGeometry();
     geom.setAttribute("position", posAttr);
     geom.setAttribute("normal", normAttr);
+
+    const indices = [];
+    for (let i = 0; i < numSegments - 1; i++) {
+        const off = i * 2;
+        indices.push(off + 0, off + 1, off + 2, off + 1, off + 3, off + 2);
+    }
+    geom.setIndex(indices);
+
     // geom.computeVertexNormals() //alternatively
     return geom;
 }
