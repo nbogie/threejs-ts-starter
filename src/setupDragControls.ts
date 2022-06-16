@@ -35,6 +35,7 @@ export function setupDragControls(objects: Object3D[],
             callbacks.dragEnd()
         }
     });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dragControls.addEventListener('drag', function (event) {
         if (callbacks?.drag) {
             callbacks.drag()

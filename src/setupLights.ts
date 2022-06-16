@@ -28,6 +28,8 @@ export function createSpotlights(scene: Scene, controlPointMeshes: Mesh[]): Spot
 
     positionSpotlightsAbove(spotlights, controlPointMeshes);
 
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const spotlightHelpers = spotlights.map(sl => {
         const h = new SpotLightHelper(sl)
         sl.userData.helper = h;
