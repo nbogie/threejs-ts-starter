@@ -1,10 +1,7 @@
-import { DragControls } from 'three/examples/jsm/controls/DragControls';
-import {
-    BufferGeometry, CatmullRomCurve3, Line,
-    LineBasicMaterial, Object3D, Scene, Vector3
-} from 'three';
+import { Object3D, Scene } from 'three';
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { loadFont, makeControlPointSphere } from './controlPoint';
+import { makeLineOnCurveFromControlPositions, updateLineBasedOnCurve } from './curveAndLine';
 import { randomWorldPos } from './randomUtils';
 import { setupCamera } from './setupCamera';
 import { setupDragControls } from './setupDragControls';
@@ -12,9 +9,6 @@ import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
-import { makeLineOnCurveFromControlPositions, updateLineBasedOnCurve } from './curveAndLine';
-
-
 
 export async function setupThreeJSScene(): Promise<void> {
     const gui = new GUI();
