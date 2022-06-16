@@ -1,6 +1,6 @@
-import { Object3D, Scene } from 'three';
+import { Scene } from 'three';
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { loadFont, makeControlPointSphere } from './controlPoint';
+import { createControlPoints } from './controlPoint';
 import { makeLineOnCurveFromControlPositions, updateLineBasedOnCurve } from './curveAndLine';
 import { randomWorldPos } from './randomUtils';
 import { setupCamera } from './setupCamera';
@@ -11,9 +11,7 @@ import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
 
 export async function setupThreeJSScene(): Promise<void> {
-    const gui = new GUI();
     const scene = new Scene();
-
 
     const dimensions = { w: window.innerWidth, h: window.innerHeight };
 
@@ -27,24 +25,23 @@ export async function setupThreeJSScene(): Promise<void> {
 
     setupHelpers(scene);
 
-    const font = await loadFont();
-    const controlPointMeshes: Object3D[] = ["red", "green", "blue", "yellow", "magenta", "cyan"].map((c, ix) => makeControlPointSphere(c, ix, font))
-    scene.add(...controlPointMeshes);
+    const controlPointMeshes = await createControlPoints(scene);
 
     const myLineMeshOnCurve = makeLineOnCurveFromControlPositions(controlPointMeshes, scene);
 
     const dragControls = setupDragControls(controlPointMeshes, camera, renderer.domElement, orbitControls);
     dragControls.addEventListener("drag", () => updateLineBasedOnCurve(myLineMeshOnCurve));
 
-
+    //setup gui
+    const gui = new GUI();
     const actions = {
         randomiseControlPoints: () => {
             controlPointMeshes.forEach(m => m.position.copy(randomWorldPos(60)))
             updateLineBasedOnCurve(myLineMeshOnCurve)
         }
     };
-
     gui.add(actions, "randomiseControlPoints")
+
     animate();
 
     function animate() {
