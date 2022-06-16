@@ -5,5 +5,6 @@ declare module "three/examples/jsm/libs/lil-gui.module.min.js" {
     //     addFolder: any;
     // }
     const GUI: any;
+    type GUI = any;
     export { GUI };
 }
