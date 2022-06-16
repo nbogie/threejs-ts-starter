@@ -10,7 +10,11 @@ import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
 
-export function setupMyThreeJSScene(): void {
+/** 
+ * Build a three.js scene and start it animating.
+ * (This function can be named whatever you like.)
+ */
+export function setupAndAnimateMyThreeJSScene(): void {
 
     const scene = new Scene();
 
@@ -43,6 +47,12 @@ export function setupMyThreeJSScene(): void {
 
 
 
+    /** 
+     * This will update some objects in the scene, 
+     * render one frame to the canvas,
+     * and queue itself to be called again very soon.
+     * You can name this function whatever you like.
+     */
     function animate() {
         myCubeMesh.rotation.y += 0.01;
         myCubeMesh.rotation.x += 0.02;
@@ -60,4 +70,4 @@ export function setupMyThreeJSScene(): void {
 
 }
 
-setupMyThreeJSScene();
+setupAndAnimateMyThreeJSScene();
