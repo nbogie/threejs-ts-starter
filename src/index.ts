@@ -1,8 +1,7 @@
 import {
-    Scene,
-    Mesh,
-    MeshStandardMaterial,
     BoxGeometry,
+    Color, Mesh,
+    MeshStandardMaterial, Scene
 } from 'three';
 import { setupCamera } from './setupCamera';
 // import { setupGUIExample } from './setupGUIExample';
@@ -32,7 +31,7 @@ export function setupThreeJSScene(): void {
     //Make some shape(s) and add them to the scene
     const geometry = new BoxGeometry(10, 10, 10);
     const material = new MeshStandardMaterial({
-        color: 0xff00ff
+        color: new Color("white")
     });
 
     const myShape: Mesh = new Mesh(geometry, material);
