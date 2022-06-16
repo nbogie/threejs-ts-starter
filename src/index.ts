@@ -45,10 +45,10 @@ export async function setupThreeJSScene(): Promise<void> {
         thickness: 2,
     }
 
-    const curve: CatmullRomCurve3 = makeCurveFromControlPositions(controlPointMeshes, roadParams);
-    const roadMesh: Mesh = createRoadMeshOnce(roadParams, curve);
+    const tempCurve: CatmullRomCurve3 = makeCurveFromControlPositions(controlPointMeshes, roadParams);
+    const roadMesh: Mesh = createRoadMeshOnce(roadParams, tempCurve);
+    roadMesh.userData.curve = tempCurve;
     scene.add(roadMesh);
-    roadMesh.userData.curve = curve;
     setupGUIForRoadParams(roadMesh, roadParams, gui)
 
 
@@ -95,7 +95,7 @@ export async function setupThreeJSScene(): Promise<void> {
         statsPanel.update();
 
         const animFrac = (clock.getElapsedTime() / 20) % 1;
-        positionAndOrientCarOnCurve(carMesh, curve, animFrac);
+        positionAndOrientCarOnCurve(carMesh, roadMesh.userData.curve, animFrac);
 
         //update camera (either leave it to orbit controls or have it chase car)
         if (dragAndOrbitControlOptions.shouldUseOrbitControls) {
@@ -110,7 +110,7 @@ export async function setupThreeJSScene(): Promise<void> {
             camera.lookAt(camera.userData.desiredPosition);
         }
 
-        logJSONToHTML({ animFrac })
+        // logJSONToHTML({ animFrac })
 
         requestAnimationFrame(animate);
     }
