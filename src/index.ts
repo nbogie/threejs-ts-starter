@@ -31,7 +31,7 @@ export function setupThreeJSScene(): void {
     //Make some shape(s) and add them to the scene
     const geometry = new BoxGeometry(10, 10, 10);
     const material = new MeshStandardMaterial({
-        color: new Color("white")
+        color: new Color("yellow")
     });
 
     const myShape: Mesh = new Mesh(geometry, material);

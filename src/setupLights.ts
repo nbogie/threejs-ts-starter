@@ -5,7 +5,7 @@ export function setupLights(scene: Scene): void {
     directionalLight1.position.set(-10, 15, 10);
     scene.add(directionalLight1);
 
-    const directionalLight2 = new DirectionalLight(new Color("blue"));
+    const directionalLight2 = new DirectionalLight(new Color("red"));
     directionalLight2.position.set(-15, 6, -6);
     scene.add(directionalLight2);
 
