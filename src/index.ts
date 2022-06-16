@@ -5,6 +5,9 @@ import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
 import { setupShapeCluster } from './setupShapeCluster'
+
+//Try out this alternative
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { setupSymmetricalShapeCluster } from './setupSymmetricalShapeCluster';
 
 export function setupThreeJSScene(): void {
