@@ -14,7 +14,7 @@ interface GridPos {
  */
 export function setupTerrain(scene: Scene): {
     tiles: Mesh[],
-    getValuesAtGridPos: (g: GridPos, time: number) => NoiseValues
+    animateTerrain: (time: number) => void
 } {
     const materialsLookup = createMaterialsLookup();
 
@@ -65,6 +65,7 @@ export function setupTerrain(scene: Scene): {
         return noiseVal;
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars
     function getSimpleNoiseValAtGridPos(pos: GridPos, time: number): number {
         return simplex.noise3d(pos.col * noiseScaling, pos.row * noiseScaling, time);
     }
@@ -95,7 +96,15 @@ export function setupTerrain(scene: Scene): {
         return materialsLookup.snow
     }
 
-    return { tiles, getValuesAtGridPos };
+    function animateTerrain(time: number): void {
+        for (const tile of tiles) {
+            const noiseValues = getValuesAtGridPos(tile.userData.gridPos, time);
+            tile.position.y = noiseValues.landHeight;
+            tile.material = noiseValues.material;
+        }
+    }
+
+    return { tiles, animateTerrain };
 }
 
 function createMaterialsLookup() {

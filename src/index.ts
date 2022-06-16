@@ -24,7 +24,7 @@ export function setupThreeJSScene(): void {
 
     // setupHelpers(scene);
 
-    const terrain = setupTerrain(scene);
+    const { animateTerrain } = setupTerrain(scene);
 
     let frameCount = 0;
 
@@ -32,11 +32,7 @@ export function setupThreeJSScene(): void {
 
     function animate() {
         renderer.render(scene, camera);
-        for (const tile of terrain.tiles) {
-            const noiseValues = terrain.getValuesAtGridPos(tile.userData.gridPos, frameCount / 300);
-            tile.position.y = noiseValues.landHeight;
-            tile.material = noiseValues.material;
-        }
+        animateTerrain(frameCount / 300);
 
         // required if controls.enableDamping or controls.autoRotate are set to true
         controls.update();
