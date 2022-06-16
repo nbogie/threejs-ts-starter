@@ -1,10 +1,11 @@
 import { Mesh, MeshStandardMaterial, Scene } from 'three';
+import { VertexNormalsHelper } from "three/examples/jsm/helpers/VertexNormalsHelper";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
-import { calculateMeshGeometry, createQuadRing } from './setupQuadRing';
+import { calculateGeometryForRing, createQuadRing } from './setupQuadRing';
 import { setupRenderer } from './setupRenderer';
 import { setupStatsPanel } from './setupStatsPanel';
 
@@ -29,6 +30,9 @@ export function setupThreeJSScene(): void {
 
     scene.add(quadRingMesh);
 
+    const vertexNormalsHelper = new VertexNormalsHelper(quadRingMesh, 1, 0xffffff);
+    scene.add(vertexNormalsHelper);
+
     const params = {
         numSegments: 100,
         thickness: 2,
@@ -41,25 +45,24 @@ export function setupThreeJSScene(): void {
         setWireframe: () => (quadRingMesh.material as MeshStandardMaterial).wireframe = true
     }
     function recalcGeom() {
-        quadRingMesh.geometry = calculateMeshGeometry(params);
+        quadRingMesh.geometry = calculateGeometryForRing(params);
+        vertexNormalsHelper.update()
     }
     gui.add(params, "numSegments", 4, 200, 2).onChange(recalcGeom);
     gui.add(params, "thickness", 0.2, 10).onChange(recalcGeom);
-    gui.add(params, "spiralGain", -10, 40, 5).onChange(recalcGeom)
+    gui.add(params, "spiralGain", -10, 200, 5).onChange(recalcGeom)
     gui.add(quadRingMesh.material, "wireframe")
     gui.add(matOptions, "applyStandard")
     gui.add(matOptions, "setWireframe")
+    gui.add(vertexNormalsHelper, "visible").name("show normals")
     animate();
 
     function animate() {
-        //Draw the current scene to the canvas - one frame of animation.
         renderer.render(scene, camera);
         statsPanel.update();
 
-        // required if controls.enableDamping or controls.autoRotate are set to true
         controls.update();
 
-        //Queue for this function to be called again when the browser is ready for another animation frame.
         requestAnimationFrame(animate);
     }
 }

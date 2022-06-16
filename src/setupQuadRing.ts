@@ -4,8 +4,7 @@
 import { BufferGeometry, Float32BufferAttribute, Mesh, MeshNormalMaterial, Vector3 } from "three";
 export function createQuadRing(): Mesh {
 
-    const geom = calculateMeshGeometry({ numSegments: 100, thickness: 4, radius: 15, spiralGain: 5 });
-    // geom.computeVertexNormals();
+    const geom = calculateGeometryForRing({ numSegments: 100, thickness: 4, radius: 15, spiralGain: 5 });
     const material = new MeshNormalMaterial();
     // const material = new MeshStandardMaterial({ color: new Color("orange"), wireframe: true });
     const mesh = new Mesh(geom, material);//{ color: 0xFFFF00 }
@@ -20,7 +19,7 @@ export interface RingParams {
     spiralGain: number;
 }
 
-export function OLDcalculateMeshGeometry(params: RingParams): BufferGeometry {
+export function calculatStraightStripGeometry(params: RingParams): BufferGeometry {
     const rawVerts: Vector3[] = [];
     const rawNorms: Vector3[] = [];
     const numSegments = Math.floor(params.numSegments);
@@ -54,7 +53,7 @@ export function OLDcalculateMeshGeometry(params: RingParams): BufferGeometry {
     return geom;
 }
 
-export function calculateMeshGeometry(params: RingParams): BufferGeometry {
+export function calculateGeometryForRing(params: RingParams): BufferGeometry {
     const rawVerts: Vector3[] = [];
     const rawNorms: Vector3[] = [];
     console.log({ params })
@@ -76,8 +75,8 @@ export function calculateMeshGeometry(params: RingParams): BufferGeometry {
         rawVerts.push(new Vector3(x1, y, z1));
         rawVerts.push(new Vector3(x2, y, z2));
 
-        rawNorms.push(new Vector3(0, 1, 0));
-        rawNorms.push(new Vector3(0, 1, 0));
+        rawNorms.push(new Vector3(0, 1, 0)); //incorrect if the ring has a slope.
+        rawNorms.push(new Vector3(0, 1, 0)); //same
     }
 
     //copy details in, in their triangle orders.
