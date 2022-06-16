@@ -3,7 +3,6 @@ import {
     MeshStandardMaterial, Scene, Vector3
 } from 'three';
 
-//@ts-ignore  - no types?
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 
 import { pick } from './randomUtils';
