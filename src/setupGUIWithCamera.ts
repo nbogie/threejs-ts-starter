@@ -1,5 +1,4 @@
 import { Camera } from 'three';
-//@ts-ignore  - are there no types available for lil-gui?
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 
 export function setupGUIWithCamera(camera: Camera): GUI {

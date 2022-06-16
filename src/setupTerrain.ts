@@ -1,5 +1,4 @@
 import { Color, Float32BufferAttribute, Mesh, MeshStandardMaterial, PlaneGeometry, Scene } from "three";
-//@ts-ignore  - are there no types available for lil-gui?
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise';
 
