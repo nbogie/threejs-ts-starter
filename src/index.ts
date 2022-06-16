@@ -2,6 +2,7 @@ import {
     Scene,
 } from 'three';
 import { setupCamera } from './setupCamera';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
