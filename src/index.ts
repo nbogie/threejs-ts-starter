@@ -1,18 +1,16 @@
-import { randFloatSpread } from 'three/src/math/MathUtils';
 import {
     BufferGeometry, CatmullRomCurve3, Line,
     LineBasicMaterial, Object3D, Scene, Vector3
 } from 'three';
+import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { loadFont, makeControlPointSphere } from './controlPoint';
+import { randomWorldPos } from './randomUtils';
 import { setupCamera } from './setupCamera';
 import { setupDragControls } from './setupDragControls';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
-//@ts-ignore  - no types?
-import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { randomWorldPos } from './randomUtils';
 
 
 

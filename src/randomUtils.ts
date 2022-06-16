@@ -6,6 +6,5 @@ export function pick<T>(arr: T[]): T {
 }
 
 export function randomWorldPos(spread: number): Vector3 {
-
     return new Vector3(randFloatSpread(spread), randFloatSpread(spread), randFloatSpread(spread))
 }

@@ -5,7 +5,7 @@ import { randFloatSpread } from "three/src/math/MathUtils";
 
 export async function loadFont(): Promise<Font> {
     const fontLoader = new FontLoader();
-    const p: Promise<Font> = new Promise((resolve, reject) => {
+    const p: Promise<Font> = new Promise((resolve) => {
         //TODO: this is already distributed in the npm package three.  Load from there.
         fontLoader.load('./assets/helvetiker_bold.typeface.json', (f: Font) => resolve(f)
         );
