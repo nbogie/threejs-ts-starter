@@ -40,8 +40,9 @@ yarn run build
 
 ### tech debt TODOs
 
-- Look for ways to reuse geometry (and curve) rather than creating new each time
-- Proper cleanup of vertex-normals helper.
+- Look for ways to reuse road geometry (and curve) rather than creating new each time
+- Clean up prev geom in the vertex-normals helper when it needs to make new geom.
+- Use slight smoothstep in shader for AA
 
 ## fun TODOs
 
