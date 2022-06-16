@@ -2,6 +2,7 @@ import { CatmullRomCurve3, Clock, Group, Mesh, Scene } from 'three';
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { positionAndOrientCarOnCurve, setupCarOnRoad } from './car';
 import { makeControlPointMeshes } from './controlPoint';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { logJSONToHTML } from './pageUtils';
 import { randomWorldPos } from './randomUtils';
 import { calculateGeometryForRoad, createRoadMeshOnce, makeCurveFromControlPositions, RoadGeomParams, setupGUIForRoadParams } from './roadGeometry';
