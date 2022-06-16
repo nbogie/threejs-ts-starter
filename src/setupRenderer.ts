@@ -12,6 +12,7 @@ export function setupRenderer(camera: PerspectiveCamera, dim: { w: number, h: nu
 
     //Register what to do if the window gets resized
     window.addEventListener('resize', onWindowResize, false);
+    /** Mutate the dimensions object passed to setupRenderer */
     function onWindowResize() {
         dim.w = window.innerWidth;
         dim.h = window.innerHeight;

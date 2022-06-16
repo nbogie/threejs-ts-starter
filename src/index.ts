@@ -10,7 +10,7 @@ import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
 
-export function setupThreeJSScene(): void {
+export function setupMyThreeJSScene(): void {
 
     const scene = new Scene();
 
@@ -20,25 +20,23 @@ export function setupThreeJSScene(): void {
 
     const renderer = setupRenderer(camera, dimensions);
 
-    const controls = setupOrbitControls(camera, renderer.domElement);
+    const orbitControls = setupOrbitControls(camera, renderer.domElement);
 
     setupLights(scene);
 
     setupHelpers(scene);
 
+    //You can try this!
     //setupGUIExample(scene);
 
-    //Make some shape(s) and add them to the scene
+
+    //Make a cube and add it to the scene.
+    //A mesh needs a geometry and a material...
     const geometry = new BoxGeometry(10, 10, 10);
-    const material = new MeshStandardMaterial({
-        color: new Color("yellow")
-    });
-
-    const myShape: Mesh = new Mesh(geometry, material);
-    myShape.position.y = 20;
-    scene.add(myShape);
-
-
+    const material = new MeshStandardMaterial({ color: new Color("yellow") });
+    const myCubeMesh = new Mesh(geometry, material);
+    myCubeMesh.position.y = 20;
+    scene.add(myCubeMesh);
 
     animate();
 
@@ -46,14 +44,14 @@ export function setupThreeJSScene(): void {
 
 
     function animate() {
-        myShape.rotation.y += 0.01;
-        myShape.rotation.x += 0.02;
+        myCubeMesh.rotation.y += 0.01;
+        myCubeMesh.rotation.x += 0.02;
 
         //Draw the current scene to the canvas - one frame of animation.
         renderer.render(scene, camera);
 
         // required if controls.enableDamping or controls.autoRotate are set to true
-        controls.update();
+        orbitControls.update();
 
         //Queue for this function to be called again when the browser is ready for another animation frame.
         requestAnimationFrame(animate);
@@ -62,4 +60,4 @@ export function setupThreeJSScene(): void {
 
 }
 
-setupThreeJSScene();
+setupMyThreeJSScene();
