@@ -30,7 +30,7 @@ export async function setupThreeJSScene(): Promise<void> {
     const camera = setupCamera(dimensions);
 
     const renderer = setupRenderer(camera, dimensions);
-    const effectComposer = setupPostProcessing(camera, renderer, scene)
+    const { composer, bloomPass } = setupPostProcessing(camera, renderer, scene)
 
     const orbitControls = setupOrbitControls(camera, renderer.domElement);
 
@@ -77,6 +77,7 @@ export async function setupThreeJSScene(): Promise<void> {
     };
 
     gui.add(actions, "randomiseControlPoints")
+    gui.add(bloomPass, "enabled").name("bloom");
 
     gui.add(dragAndOrbitControlOptions, "shouldUseOrbitControls").name("layout mode").onChange(
         (v: boolean) => {
@@ -104,7 +105,7 @@ export async function setupThreeJSScene(): Promise<void> {
 
     function animate() {
         // renderer.render(scene, camera);
-        effectComposer.render();
+        composer.render();
         statsPanel.update();
 
         const animFrac = (clock.getElapsedTime() / 20) % 1;

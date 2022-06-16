@@ -3,7 +3,7 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-export function setupPostProcessing(camera: PerspectiveCamera, renderer: WebGLRenderer, scene: Scene): EffectComposer {
+export function setupPostProcessing(camera: PerspectiveCamera, renderer: WebGLRenderer, scene: Scene): { composer: EffectComposer, bloomPass: UnrealBloomPass } {
 
     //Simplified from this example
     //https://threejs.org/examples/webgl_postprocessing_unreal_bloom.html
@@ -22,5 +22,5 @@ export function setupPostProcessing(camera: PerspectiveCamera, renderer: WebGLRe
     composer.addPass(renderPass);
     composer.addPass(bloomPass);
 
-    return composer;
+    return { composer, bloomPass };
 }
