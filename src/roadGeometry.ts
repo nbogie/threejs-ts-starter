@@ -1,4 +1,5 @@
 import { BufferGeometry, CatmullRomCurve3, Color, DoubleSide, Float32BufferAttribute, Mesh, MeshNormalMaterial, MeshStandardMaterial, Vector2, Vector3 } from 'three';
+import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { createRoadShaderMaterial } from './roadShader';
 export interface RoadGeomParams {
@@ -99,11 +100,13 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
 
 
 
-export function setupGUIForRoadParams(roadMesh: Mesh, params: RoadGeomParams, gui: GUI): void {
+export function setupGUIForRoadParams(roadMesh: Mesh, params: RoadGeomParams, vertexNormalsHelper: VertexNormalsHelper, gui: GUI): void {
     function recalcGeom() {
         roadMesh.geometry = calculateGeometryForRoad(params, roadMesh.userData.curve);
+        vertexNormalsHelper.update();
     }
     gui.add(params, "numSegments", 4, 200, 2).onChange(recalcGeom);
     gui.add(params, "thickness", 0.2, 10).onChange(recalcGeom);
     gui.add(roadMesh.material, "wireframe")
+    gui.add(vertexNormalsHelper, "visible").name("show normals");
 }

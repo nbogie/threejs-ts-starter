@@ -1,4 +1,5 @@
 import { CatmullRomCurve3, Clock, Group, Mesh, Scene } from 'three';
+import { VertexNormalsHelper } from "three/examples/jsm/helpers/VertexNormalsHelper";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { positionAndOrientCarOnCurve, setupCarOnRoad } from './car';
 import { makeControlPointMeshes } from './controlPoint';
@@ -50,7 +51,12 @@ export async function setupThreeJSScene(): Promise<void> {
     const roadMesh: Mesh = createRoadMeshOnce(roadParams, tempCurve);
     roadMesh.userData.curve = tempCurve;
     scene.add(roadMesh);
-    setupGUIForRoadParams(roadMesh, roadParams, gui)
+
+    const vertexNormalsHelper = new VertexNormalsHelper(roadMesh, 1, 0xCCCCFF);
+    scene.add(vertexNormalsHelper);
+    vertexNormalsHelper.visible = false;
+
+    setupGUIForRoadParams(roadMesh, roadParams, vertexNormalsHelper, gui)
 
 
     const carMesh = setupCarOnRoad(scene, camera);
@@ -121,8 +127,8 @@ export async function setupThreeJSScene(): Promise<void> {
         const curve: CatmullRomCurve3 = makeCurveFromControlPositions(controlPointMeshes, roadParams);
         roadMesh.userData.curve = curve;
         roadMesh.geometry = calculateGeometryForRoad(roadParams, roadMesh.userData.curve)
+        vertexNormalsHelper.update();
     }
 }
 
 setupThreeJSScene();
-
