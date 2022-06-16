@@ -1,4 +1,4 @@
-import { BoxGeometry, Camera, Curve, Mesh, MeshStandardMaterial, Scene } from "three";
+import { BoxGeometry, Camera, CatmullRomCurve3, Mesh, MeshStandardMaterial, Scene } from "three";
 
 export function setupCarOnRoad(scene: Scene, camera: Camera): Mesh {
     const carGeom = new BoxGeometry(1, 1, 2);
@@ -10,7 +10,7 @@ export function setupCarOnRoad(scene: Scene, camera: Camera): Mesh {
     return carMesh;
 }
 
-export function poscar(carMesh: Mesh, curve: Curve, animFrac: number) {
+export function positionAndOrientCarOnCurve(carMesh: Mesh, curve: CatmullRomCurve3, animFrac: number): void {
 
     //position the car
     const pt = curve.getPoint(animFrac);
