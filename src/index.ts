@@ -3,6 +3,9 @@ import {
 } from 'three';
 import { setupCamera } from './setupCamera';
 import { setupEffectComposer1 } from './setupEffectComposer1';
+
+//try this alternative for more effects (controlled with num keys)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { setupEffectComposer2 } from './setupEffectComposer2';
 import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
