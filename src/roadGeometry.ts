@@ -113,6 +113,9 @@ export function calculateGeometryForRoad(params: RoadGeomParams, curve: CatmullR
 export function setupGUIForRoadParams(roadMesh: Mesh, params: RoadGeomParams, vertexNormalsHelper: VertexNormalsHelper, gui: GUI): void {
     function recalcGeom() {
         roadMesh.geometry = calculateGeometryForRoad(params, roadMesh.userData.curve);
+        //TODO: vertexNormalsHelper currently has a static number of positions.
+        //so if we increase the number of segments (therefore positions and normals) in the geometry, 
+        //the helper will not create more "arrows" to match
         vertexNormalsHelper.update();
     }
     gui.add(params, "numSegments", 4, 300, 2).onChange(recalcGeom);
