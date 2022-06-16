@@ -1,4 +1,4 @@
-import { Mesh, MeshStandardMaterial, Scene } from 'three';
+import { Color, Mesh, MeshStandardMaterial, Scene } from 'three';
 import { VertexNormalsHelper } from "three/examples/jsm/helpers/VertexNormalsHelper";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { setupCamera } from './setupCamera';
@@ -26,32 +26,31 @@ export function setupThreeJSScene(): void {
 
     setupHelpers(scene);
 
-    const quadRingMesh: Mesh = createQuadRing();
-
-    scene.add(quadRingMesh);
-
-    const vertexNormalsHelper = new VertexNormalsHelper(quadRingMesh, 1, 0xffffff);
-    scene.add(vertexNormalsHelper);
-
-    const params = {
-        numSegments: 100,
+    const ringParams = {
+        numSegments: 130,
         thickness: 2,
         radius: 20,
         spiralGain: 0
     }
+    const ringMesh: Mesh = createQuadRing(ringParams);
+
+    scene.add(ringMesh);
+
+    const vertexNormalsHelper = new VertexNormalsHelper(ringMesh, 1, 0xffffff);
+    scene.add(vertexNormalsHelper);
+
     const matOptions = {
-        isNormal: true,
-        applyStandard: () => quadRingMesh.material = new MeshStandardMaterial({ color: 0xFF00FF }),
-        setWireframe: () => (quadRingMesh.material as MeshStandardMaterial).wireframe = true
+        applyStandard: () => ringMesh.material = new MeshStandardMaterial({ color: new Color("gray") }),
+        setWireframe: () => (ringMesh.material as MeshStandardMaterial).wireframe = true
     }
     function recalcGeom() {
-        quadRingMesh.geometry = calculateGeometryForRing(params);
+        ringMesh.geometry = calculateGeometryForRing(ringParams);
         vertexNormalsHelper.update()
     }
-    gui.add(params, "numSegments", 4, 200, 2).onChange(recalcGeom);
-    gui.add(params, "thickness", 0.2, 10).onChange(recalcGeom);
-    gui.add(params, "spiralGain", -10, 200, 5).onChange(recalcGeom)
-    gui.add(quadRingMesh.material, "wireframe")
+    gui.add(ringParams, "numSegments", 4, 200, 2).onChange(recalcGeom);
+    gui.add(ringParams, "thickness", 0.2, 10).onChange(recalcGeom);
+    gui.add(ringParams, "spiralGain", -10, 200, 5).onChange(recalcGeom)
+    gui.add(ringMesh.material, "wireframe")
     gui.add(matOptions, "applyStandard")
     gui.add(matOptions, "setWireframe")
     gui.add(vertexNormalsHelper, "visible").name("show normals")
