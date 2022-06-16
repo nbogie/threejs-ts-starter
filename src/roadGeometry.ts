@@ -1,5 +1,4 @@
 import { BufferGeometry, CatmullRomCurve3, Float32BufferAttribute, Mesh, Vector2, Vector3 } from 'three';
-//@ts-ignore
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { createRoadShaderMaterial } from './roadShader';
 
