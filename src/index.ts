@@ -17,6 +17,7 @@ import { createSpotlights, positionSpotlightsAbove, setupLights } from './setupL
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
 import { setupStatsPanel } from './setupStatsPanel';
+import { setupPostProcessing } from './setupPostProcessing';
 
 export async function setupThreeJSScene(): Promise<void> {
     const statsPanel = setupStatsPanel();
@@ -29,6 +30,7 @@ export async function setupThreeJSScene(): Promise<void> {
     const camera = setupCamera(dimensions);
 
     const renderer = setupRenderer(camera, dimensions);
+    const effectComposer = setupPostProcessing(camera, renderer, scene)
 
     const orbitControls = setupOrbitControls(camera, renderer.domElement);
 
@@ -101,7 +103,8 @@ export async function setupThreeJSScene(): Promise<void> {
     animate();
 
     function animate() {
-        renderer.render(scene, camera);
+        // renderer.render(scene, camera);
+        effectComposer.render();
         statsPanel.update();
 
         const animFrac = (clock.getElapsedTime() / 20) % 1;
