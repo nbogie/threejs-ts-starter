@@ -6,8 +6,6 @@ import { MyVertexNormalsHelper } from "./MyVertexNormalsHelper";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { positionAndOrientCarOnCurve, setupCarOnRoad } from './car';
 import { makeControlPointMeshes } from './controlPoint';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { logJSONToHTML } from './pageUtils';
 import { randomWorldPos } from './randomUtils';
 import { calculateGeometryForRoad, createRoadMeshOnce, makeCurveFromControlPositions, RoadGeomParams, setupGUIForRoadParams } from './roadGeometry';
 import { setupCamera } from './setupCamera';
@@ -15,9 +13,9 @@ import { DragAndOrbitControlSettings, setupDragControls } from './setupDragContr
 import { setupHelpers } from './setupHelpers';
 import { createSpotlights, positionSpotlightsAbove, setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
+import { setupPostProcessing } from './setupPostProcessing';
 import { setupRenderer } from './setupRenderer';
 import { setupStatsPanel } from './setupStatsPanel';
-import { setupPostProcessing } from './setupPostProcessing';
 
 export async function setupThreeJSScene(): Promise<void> {
     const statsPanel = setupStatsPanel();
@@ -64,7 +62,9 @@ export async function setupThreeJSScene(): Promise<void> {
     setupGUIForRoadParams(roadMesh, roadParams, vertexNormalsHelper, gui)
 
 
-    const carMesh = setupCarOnRoad(scene, camera);
+    const { carBoxMesh, carGroup, carModel } = await setupCarOnRoad(scene, camera);
+    gui.add(carBoxMesh, "visible").name("car box")
+    gui.add(carModel, "visible").name("car model")
 
     const spotlights = createSpotlights(scene, controlPointMeshes);
 
@@ -109,7 +109,7 @@ export async function setupThreeJSScene(): Promise<void> {
         statsPanel.update();
 
         const animFrac = (clock.getElapsedTime() / 20) % 1;
-        positionAndOrientCarOnCurve(carMesh, roadMesh.userData.curve, animFrac);
+        positionAndOrientCarOnCurve(carGroup, roadMesh.userData.curve, animFrac);
 
         //update camera (either leave it to orbit controls or have it chase car)
         if (dragAndOrbitControlOptions.shouldUseOrbitControls) {
