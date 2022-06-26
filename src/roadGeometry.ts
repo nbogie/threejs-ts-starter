@@ -7,15 +7,10 @@ export interface RoadGeomParams {
     numSegments: number;
     thickness: number;
 }
-export function makeCurveFromControlPositions(controlPointMeshes: Mesh[], params: RoadGeomParams): CatmullRomCurve3 {
+export function makeCurveFromControlPositions(controlPointMeshes: Mesh[]): CatmullRomCurve3 {
     //These position objects are importantly shared between the control-point meshes and the curve
     const controlPositions: Vector3[] = controlPointMeshes.map(mesh => mesh.position);
-
     const curve: CatmullRomCurve3 = new CatmullRomCurve3(controlPositions, false);
-    // const points = curve.getPoints(params.numSegments - 1);
-
-    // curve.updateArcLengths();
-    // console.log("making curve: ", { points, params, curve })
     return curve;
 }
 

@@ -50,7 +50,7 @@ export async function setupThreeJSScene(): Promise<void> {
         thickness: 2,
     }
 
-    const tempCurve: CatmullRomCurve3 = makeCurveFromControlPositions(controlPointMeshes, roadParams);
+    const tempCurve: CatmullRomCurve3 = makeCurveFromControlPositions(controlPointMeshes);
     const roadMesh: Mesh = createRoadMeshOnce(roadParams, tempCurve);
     roadMesh.userData.curve = tempCurve;
     scene.add(roadMesh);
@@ -131,7 +131,7 @@ export async function setupThreeJSScene(): Promise<void> {
 
     function regenerateCurveAndGeometry() {
         //TODO: what can we re-use, rather than regenerate?
-        const curve: CatmullRomCurve3 = makeCurveFromControlPositions(controlPointMeshes, roadParams);
+        const curve: CatmullRomCurve3 = makeCurveFromControlPositions(controlPointMeshes);
         roadMesh.userData.curve = curve;
         roadMesh.geometry = calculateGeometryForRoad(roadParams, roadMesh.userData.curve)
         vertexNormalsHelper.update();
