@@ -4,3 +4,4 @@ node_modules
 /dist
 .DS_Store
 cherry-pick-to-all.sh
+yarn-error.log
