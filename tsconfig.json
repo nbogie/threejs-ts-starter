@@ -10,10 +10,11 @@
     "sourceMap": true,
     "strict": true,
     "baseUrl": ".",
-    "resolveJsonModule":true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
     "paths": {
-      "*": ["node_modules/*", "src/types/*"]
+      "*": ["src/types/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*"]
 }
