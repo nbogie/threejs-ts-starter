@@ -2,7 +2,7 @@ import {
     Scene,
     Mesh,
     MeshStandardMaterial,
-    BoxBufferGeometry,
+    BoxGeometry,
     AudioAnalyser,
     Color,
 } from 'three';
@@ -41,7 +41,7 @@ export function setupThreeJSScene(): void {
 
 
     //shape(s) make a lot of little cubes, one for each band of the EQ visualiser.
-    const geometry = new BoxBufferGeometry(1, 1, 1);
+    const geometry = new BoxGeometry(1, 1, 1);
     const material = new MeshStandardMaterial({
         color: 0xff00ff
     });
