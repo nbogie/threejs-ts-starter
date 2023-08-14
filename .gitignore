@@ -3,3 +3,4 @@ node_modules
 /dist
 .netlify/state.json
 .DS_Store
+.parcel-cache
