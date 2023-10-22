@@ -10,6 +10,6 @@ export function setupLights(scene: Scene): void {
     dirLight2.position.set(-5, 2, -2);
 
     scene.add(dirLight2);
-    const light = new AmbientLight(0x604040); // soft white light
+    const light = new AmbientLight(0x907070); // soft white light
     scene.add(light);
 }
