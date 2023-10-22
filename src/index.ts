@@ -1,10 +1,4 @@
-import {
-    AnimationActionLoopStyles,
-    AnimationMixer,
-    Color,
-    Object3D,
-} from "three";
-import { Scene } from "three";
+import { AnimationMixer, Color, Object3D, Scene } from "three";
 import { dumpObjectToConsoleAsString } from "./debugModel";
 import { loadModel } from "./loadModel";
 import { setupCamera } from "./setupCamera";
