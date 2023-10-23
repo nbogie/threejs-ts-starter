@@ -1,3 +1,5 @@
+//press keys 1-3 to control animations (static poses)
+
 import { AnimationMixer, Color, Object3D, Scene } from "three";
 import { dumpObjectToConsoleAsString } from "./debugModel";
 import { loadModel } from "./loadModel";
@@ -24,7 +26,7 @@ export async function setupThreeJSScene(): Promise<void> {
 
     //Load a model of a submarine and add it to the scene!
     //   const modelDetails = await loadModel("./assets/lionSubmariners.glb");
-    const modelDetails = await loadModel("./assets/wickedWitch6.glb");
+    const modelDetails = await loadModel("./assets/wickedWitch.glb");
     if (!modelDetails) {
         throw new Error("Failed to load model");
     }
@@ -32,18 +34,19 @@ export async function setupThreeJSScene(): Promise<void> {
 
     const mixer = new AnimationMixer(witchModel);
 
-    witchModel.scale.set(5, 5, 5);
+    witchModel.scale.set(3, 3, 3);
     witchModel.position.set(0, 0, 0);
     scene.add(witchModel);
 
     camera.position.set(0, 10, -20);
     camera.lookAt(witchModel.position);
+
     //Optional: See in console what the model / scene consists of
     dumpObjectToConsoleAsString(witchModel);
 
-    mixer.addEventListener("loop", function (e) {
-        console.log("mixer event: loop", e);
-    });
+    // mixer.addEventListener("loop", function (e) {
+    //     console.log("mixer event: loop", e);
+    // });
     mixer.addEventListener("finished", function (e) {
         console.log("mixer event: finished", e);
     });
@@ -54,8 +57,9 @@ export async function setupThreeJSScene(): Promise<void> {
         if (animNum !== null) {
             const anim = animations[animNum - 1];
             console.log("playing anim " + animNum, anim);
-            //   mixer.stopAllAction();
+            mixer.stopAllAction();
 
+            //i think this caches the clips
             const action = mixer.clipAction(anim); // Assuming there's only one animation
             action.reset();
 
@@ -83,10 +87,12 @@ export async function setupThreeJSScene(): Promise<void> {
 
     //keep a frame counter so we can use it as an input to an animation
     let frameCount = 0;
+    let lastTime = 0;
 
-    animate();
+    animate(0);
 
-    function animate() {
+    function animate(elapsedTime: number) {
+        const deltaTime = elapsedTime - lastTime;
         renderer.render(scene, camera);
         if (!modelDetails) {
             throw new Error("No model details");
@@ -97,12 +103,15 @@ export async function setupThreeJSScene(): Promise<void> {
         // moveCameraAlongsideSubmarine(modelDetails.model);
         //either /  or move the camera automatically or allow the user to control it
         controls.update(); // required if controls has .enableDamping .autoRotate set true.
+        mixer.update(deltaTime);
         const infoElem = document.getElementById("info");
         if (infoElem && modelDetails) {
             infoElem.innerText =
                 "z: " + Math.round(modelDetails.model.position.z);
         }
         requestAnimationFrame(animate);
+        lastTime = elapsedTime;
+
         frameCount++;
 
         function animateSubmarine(submarine: Object3D) {
