@@ -1,6 +1,6 @@
 //press keys 1-3 to control animations (static poses)
 
-import { AnimationMixer, Color, Object3D, Scene } from "three";
+import { AnimationMixer, Color, Object3D, Scene, Vector2 } from "three";
 import { dumpObjectToConsoleAsString } from "./debugModel";
 import { loadModel } from "./loadModel";
 import { setupCamera } from "./setupCamera";
@@ -99,7 +99,7 @@ export async function setupThreeJSScene(): Promise<void> {
         }
 
         const { model: submarine } = modelDetails;
-        animateSubmarine(submarine);
+        animateWitch(submarine, elapsedTime);
         // moveCameraAlongsideSubmarine(modelDetails.model);
         //either /  or move the camera automatically or allow the user to control it
         controls.update(); // required if controls has .enableDamping .autoRotate set true.
@@ -114,22 +114,28 @@ export async function setupThreeJSScene(): Promise<void> {
 
         frameCount++;
 
-        function animateSubmarine(submarine: Object3D) {
+        function animateWitch(witch: Object3D, elapsedTime: number) {
             //moving forward
-            submarine.rotation.z = 0.5;
+
+            const angle = elapsedTime / 1000;
+            const angleFwd = angle - 0.05;
+            const witchPathRadius = 15;
+            const posFwd = polarToCartesian(angleFwd, witchPathRadius);
+            const posCurrent = polarToCartesian(angle, witchPathRadius);
 
             // submarine.position.setZ((submarine.position.z -= 0.1));
             //bobbing up and down with a sine wave
-            submarine.position.setY(Math.sin(frameCount / 20));
-
-            if (submarine.userData.propeller) {
-                submarine.userData.propeller.rotation.y += 0.1;
+            witch.position.setX(posCurrent.x);
+            witch.position.setY(Math.sin(frameCount / 20));
+            witch.position.setZ(posCurrent.y);
+            witch.lookAt(posFwd.x, witch.position.y, posFwd.y);
+            witch.rotation.z += -0.5;
+            if (witch.userData.propeller) {
+                witch.userData.propeller.rotation.y += 0.1;
             }
-            if (submarine.userData.periscope) {
+            if (witch.userData.periscope) {
                 //correct
-                submarine.userData.periscope.rotation.z = Math.sin(
-                    frameCount / 40,
-                );
+                witch.userData.periscope.rotation.z = Math.sin(frameCount / 40);
                 //but funnier
                 // submarine.userData.periscope.rotation.y = Math.sin(frameCount / 10);
             }
@@ -152,3 +158,9 @@ function keyAsNumber(keyStr: string): number | null {
 }
 
 setupThreeJSScene();
+
+function polarToCartesian(angleFwd: number, witchPathRadius: number): Vector2 {
+    const x = Math.cos(angleFwd) * witchPathRadius;
+    const y = Math.sin(angleFwd) * witchPathRadius;
+    return new Vector2(x, y);
+}
